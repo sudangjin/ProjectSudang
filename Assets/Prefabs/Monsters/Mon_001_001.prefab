@@ -12,10 +12,11 @@ GameObject:
   - component: {fileID: 7765478799321058733}
   - component: {fileID: 1962509407978027239}
   - component: {fileID: 7872744550761567701}
-  - component: {fileID: -6489711471508621568}
+  - component: {fileID: -7454062401782289075}
+  - component: {fileID: -4001238850431610908}
   m_Layer: 6
   m_Name: Mon_001_001
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -150,7 +151,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &-6489711471508621568
+--- !u!114 &-7454062401782289075
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -159,11 +160,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 2752260645269809559}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e2d8f7d80e3d614682d1507943bf1a7, type: 3}
+  m_Script: {fileID: 11500000, guid: a8383265a4a23c047a07b7aff1e99f22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2
-  attackRange: 1.5
+--- !u!114 &-4001238850431610908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2752260645269809559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0228534430f3c64d86d30e1613e703b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8197573586708461734
 GameObject:
   m_ObjectHideFlags: 0
