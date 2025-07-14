@@ -13,10 +13,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public GameState State { get; private set; } = GameState.None;
+    [Header("게임 참조")]
+    [SerializeField] private StageController stageController;
+    [SerializeField] private Transform player;
 
-    public Transform player;
-    public StageController stageController;
+    public GameState State { get; private set; } = GameState.None;
 
     private void Awake()
     {
@@ -35,12 +36,18 @@ public class GameManager : MonoBehaviour
         InitializeGame();
     }
 
-    public void InitializeGame()
+    private void InitializeGame()
     {
         State = GameState.Playing;
 
-        // 스테이지 시작
-        stageController.StartStage(player);
+        if (stageController != null && player != null)
+        {
+            stageController.StartStage(player);
+        }
+        else
+        {
+            Debug.LogWarning("StageController 또는 Player가 연결되지 않았습니다.");
+        }
     }
 
     public void GameOver()
@@ -48,8 +55,7 @@ public class GameManager : MonoBehaviour
         if (State == GameState.GameOver) return;
 
         State = GameState.GameOver;
-        Debug.Log("Game Over!");
-        // TODO: UI 구현
+        Debug.Log("Game Over");
     }
 
     public void Victory()
@@ -57,7 +63,6 @@ public class GameManager : MonoBehaviour
         if (State == GameState.Victory) return;
 
         State = GameState.Victory;
-        Debug.Log("Stage Cleared!");
-        // TODO: UI 구현
+        Debug.Log("Victory!");
     }
 }

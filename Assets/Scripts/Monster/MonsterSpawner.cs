@@ -10,7 +10,7 @@ public class MonsterSpawner : MonoBehaviour
     [Header("Params")]
     [SerializeField] private float defaultMoveSpeed = 2f;
     [SerializeField] private float defaultAttackRange = 1.5f;
-    [SerializeField] private int defaultHP = 20;
+    [SerializeField] private int defaultHP = 3;
 
     private Transform player;
     private float timer;

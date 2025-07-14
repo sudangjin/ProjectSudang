@@ -4,9 +4,11 @@ using UnityEngine;
 public class MonsterView : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
+    private MonsterController controller;
 
-    public void Init()
+    public void Init(MonsterController monsterController)
     {
+        controller = monsterController;
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
@@ -15,14 +17,10 @@ public class MonsterView : MonoBehaviour
         transform.position += (Vector3)(direction * speed * Time.deltaTime);
     }
 
-    public void UpdateSortingOrder()
-    {
-        spriteRenderer.sortingOrder = Mathf.RoundToInt(-transform.position.y * 100);
-    }
-
     public void PlayHitEffect()
     {
-        spriteRenderer.color = Color.red;
+        //spriteRenderer.color = Color.red;
+        CancelInvoke(nameof(RestoreColor));
         Invoke(nameof(RestoreColor), 0.1f);
     }
 

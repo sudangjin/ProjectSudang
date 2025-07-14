@@ -12,7 +12,7 @@ public class MonsterController : MonoBehaviour
         target = targetTransform;
         model = new MonsterModel(moveSpeed, attackRange, hp);
         view = GetComponent<MonsterView>();
-        view.Init();
+        view.Init(this);
     }
 
     private void Update()
@@ -40,4 +40,7 @@ public class MonsterController : MonoBehaviour
             view.Die();
         }
     }
+
+    public int GetCurrentHP() => model.CurrentHP;
+    public int GetMaxHP() => model.MaxHP;
 }
