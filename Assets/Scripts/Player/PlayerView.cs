@@ -15,6 +15,10 @@ public class PlayerView : MonoBehaviour
         sr.color = Color.red;
         Invoke(nameof(RestoreColor), 0.1f);
     }
+    public void PlayLevelUpEffect()
+    {
+        Debug.Log("Level Up!");
+    }
 
     private void RestoreColor()
     {

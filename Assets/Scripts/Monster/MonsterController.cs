@@ -37,6 +37,7 @@ public class MonsterController : MonoBehaviour
 
         if (model.IsDead)
         {
+            GameManager.Instance.Player.GainExp(1);
             view.Die();
         }
     }

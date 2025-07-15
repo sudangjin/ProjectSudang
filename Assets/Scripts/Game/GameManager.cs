@@ -15,9 +15,11 @@ public class GameManager : MonoBehaviour
 
     [Header("게임 참조")]
     [SerializeField] private StageController stageController;
-    [SerializeField] private Transform player;
+    [SerializeField] private PlayerController playerController;
 
     public GameState State { get; private set; } = GameState.None;
+
+    public PlayerController Player => playerController;
 
     private void Awake()
     {
@@ -33,20 +35,15 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        InitializeGame();
-    }
-
-    private void InitializeGame()
-    {
         State = GameState.Playing;
 
-        if (stageController != null && player != null)
+        if (stageController != null && playerController != null)
         {
-            stageController.StartStage(player);
+            stageController.StartStage(playerController.transform);
         }
         else
         {
-            Debug.LogWarning("StageController 또는 Player가 연결되지 않았습니다.");
+            Debug.LogWarning("StageController 또는 PlayerController가 연결되지 않았습니다.");
         }
     }
 
