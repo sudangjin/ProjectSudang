@@ -12,12 +12,6 @@ public class PlayerShooter : MonoBehaviour
     [SerializeField] private float fireInterval = 0.5f;
 
     private float fireTimer = 0f;
-    private PlayerAimer aimer;
-
-    void Start()
-    {
-        aimer = GetComponent<PlayerAimer>();
-    }
 
     void Update()
     {
@@ -32,10 +26,10 @@ public class PlayerShooter : MonoBehaviour
 
     private void FireBullet()
     {
-        if (bulletPrefab == null || firePoint == null || aimer == null)
+        if (bulletPrefab == null || firePoint == null)
             return;
 
-        Vector2 fireDir = aimer.GetAimDirection();
+        Vector2 fireDir = GameManager.Instance.Player.GetAimDirection();
         GameObject bulletObj = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         BulletView view = bulletObj.GetComponent<BulletView>();
         new BulletController(view, fireDir, bulletSpeed, bulletLifeTime, bulletDamage);

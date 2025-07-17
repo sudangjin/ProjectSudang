@@ -15,7 +15,6 @@ public class PlayerModel
     {
         MaxHP = maxHP;
         CurrentHP = maxHP;
-
         Level = 1;
         CurrentExp = 0;
     }
