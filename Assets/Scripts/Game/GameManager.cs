@@ -13,13 +13,13 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [Header("게임 참조")]
+    [SerializeField] private GameConfig gameConfig;
+
     [SerializeField] private StageController stageController;
     [SerializeField] private PlayerController playerController;
 
+    public GameConfig Config => gameConfig;
     public GameState State { get; private set; } = GameState.None;
-
-    public PlayerController Player => playerController;
 
     private void Awake()
     {

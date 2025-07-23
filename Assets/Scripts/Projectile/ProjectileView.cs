@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class BulletView : MonoBehaviour
+public class ProjectileView : MonoBehaviour
 {
-    private BulletController controller;
+    private ProjectileController controller;
 
-    public void Init(BulletController controller)
+    public void Init(ProjectileController controller)
     {
         this.controller = controller;
         RotateToDirection(controller.Direction);
@@ -28,9 +28,11 @@ public class BulletView : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out MonsterController monster))
+        if (!controller.IsTargetLayer(collision.gameObject)) return;
+
+        if (collision.TryGetComponent(out IHittable target))
         {
-            controller.OnHit(monster);
+            controller.OnHit(target);
         }
     }
 }

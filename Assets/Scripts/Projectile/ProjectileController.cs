@@ -1,29 +1,33 @@
 using UnityEngine;
 
-public class BulletController
+public class ProjectileController
 {
     public Vector2 Direction { get; private set; }
     public float Speed { get; private set; }
     public float LifeTime { get; private set; }
     public float Damage { get; private set; }
 
-    private BulletView view;
+    private ProjectileView view;
     private float timer;
     private Vector3 startPosition;
-    private float maxDistance = 20f; // 추가: 최대 이동 거리
+    private float maxDistance = 20f;
     private bool isDestroyed = false;
 
-    public BulletController(BulletView view, Vector2 direction, float speed, float lifeTime, float damage)
+    private IHittable targetLayer;
+    private LayerMask targetMask;
+
+    public ProjectileController(ProjectileView view, Vector2 direction, float speed, float lifeTime, float damage, LayerMask targetMask)
     {
         this.view = view;
         Direction = direction.normalized;
         Speed = speed;
         LifeTime = lifeTime;
         Damage = damage;
+        this.targetMask = targetMask;
 
         startPosition = view.transform.position;
         this.view.Init(this);
-        BulletUpdater.Instance.Register(this); // 매 프레임 호출 등록
+        ProjectileUpdater.Instance.Register(this);
     }
 
     public void Update()
@@ -35,25 +39,30 @@ public class BulletController
 
         if (timer >= LifeTime || distance >= maxDistance)
         {
-            DestroyBullet();
+            DestroyProjectile();
             return;
         }
 
         view.Move(Direction, Speed);
     }
 
-    public void OnHit(MonsterController monster)
+    public void OnHit(IHittable target)
     {
         if (isDestroyed) return;
 
-        monster.TakeDamage((int)Damage);
-        DestroyBullet();
+        target.TakeDamage((int)Damage);
+        DestroyProjectile();
     }
 
-    private void DestroyBullet()
+    private void DestroyProjectile()
     {
         isDestroyed = true;
-        BulletUpdater.Instance.Unregister(this);
+        ProjectileUpdater.Instance.Unregister(this);
         view.DestroySelf();
+    }
+
+    public bool IsTargetLayer(GameObject obj)
+    {
+        return ((1 << obj.layer) & targetMask) != 0;
     }
 }

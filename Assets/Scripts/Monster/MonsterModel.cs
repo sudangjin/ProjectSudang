@@ -4,10 +4,8 @@ public class MonsterModel
 {
     public float MoveSpeed { get; private set; }
     public float AttackRange { get; private set; }
-
     public int MaxHP { get; private set; }
     public int CurrentHP { get; private set; }
-
     public bool IsDead => CurrentHP <= 0;
 
     public MonsterModel(float moveSpeed, float attackRange, int maxHP)

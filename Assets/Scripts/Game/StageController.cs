@@ -9,12 +9,9 @@ public class StageController : MonoBehaviour
         spawner.StartSpawn(player);
     }
 
-    public void OnMonsterCleared()
+    public void OnFinishStage()
     {
-        if (spawner.AllMonstersDefeated())
-        {
-            GameManager.Instance.Victory();
-        }
+        GameManager.Instance.Victory();
     }
 
     public void OnPlayerDead()

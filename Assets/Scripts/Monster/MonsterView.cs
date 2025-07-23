@@ -5,7 +5,6 @@ public class MonsterView : MonoBehaviour
 {
     private MonsterController controller;
 
-    [Header("Components")]
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Animator animator;
     [SerializeField] private UIGauge hpGauge;
@@ -28,13 +27,13 @@ public class MonsterView : MonoBehaviour
 
         if (hpGauge != null)
         {
-            hpGauge.Init(controller.GetMaxHP());
-            hpGauge.SetVisibility(controller.GetCurrentHP() < controller.GetMaxHP());
+            hpGauge.Init(controller.MaxHP);
+            hpGauge.SetVisibility(controller.CurrentHP < controller.MaxHP);
         }
 
-        if (GameManager.Instance != null && GameManager.Instance.Player != null)
+        if (Player.Instance != null)
         {
-            playerTransform = GameManager.Instance.Player.transform;
+            playerTransform = Player.Instance.transform;
         }
     }
 
@@ -54,20 +53,20 @@ public class MonsterView : MonoBehaviour
 
     public void PlayHitEffect()
     {
-        // Èò»ö ±ôºýÀÓ
-        if (spriteRenderer != null)
-        {
-            if (flashCoroutine != null)
-                StopCoroutine(flashCoroutine);
+        if (spriteRenderer == null) return;
 
-            flashCoroutine = StartCoroutine(FlashWhite());
-        }
+        if (flashCoroutine != null)
+            StopCoroutine(flashCoroutine);
 
-        if (hpGauge != null)
-        {
-            hpGauge.UpdateValue(controller.GetCurrentHP());
-            hpGauge.SetVisibility(true);
-        }
+        flashCoroutine = StartCoroutine(FlashWhite());
+    }
+
+    public void UpdateHPGauge(int current, int max)
+    {
+        if (hpGauge == null) return;
+
+        hpGauge.UpdateValue(current);
+        hpGauge.SetVisibility(current < max);
     }
 
     private IEnumerator FlashWhite()

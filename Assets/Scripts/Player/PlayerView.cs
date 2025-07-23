@@ -1,17 +1,42 @@
 using UnityEngine;
+using System.Collections;
 using DG.Tweening;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class PlayerView : MonoBehaviour
 {
     [SerializeField] private Transform unit;
-    [SerializeField] private Transform arrow;
+    [SerializeField] private Transform dirStick;
     [SerializeField] private float rotateDuration = 0.15f;
+
+    [SerializeField] private UIGauge hpGauge;
+    [SerializeField] private SpriteRenderer spriteRenderer; // 추가 필요
 
     private bool currentFacingLeft = false;
 
-    public void Init()
+    private Coroutine flashCoroutine;
+    private MaterialPropertyBlock propertyBlock;
+    private static readonly int ColorID = Shader.PropertyToID("_Color");
+
+    private void Awake()
     {
+        propertyBlock = new MaterialPropertyBlock();
+    }
+
+    public void Init(PlayerController controller)
+    {
+        if (controller == null) return;
+
+        if (hpGauge != null)
+        {
+            int max = controller.GetMaxHP();
+            int current = controller.GetCurrentHP();
+            hpGauge.Init(max);
+            hpGauge.UpdateValue(current);
+        }
+
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     public void UpdateFacingByDirection(Vector2 dir)
@@ -30,19 +55,19 @@ public class PlayerView : MonoBehaviour
 
     public void SetArrowRotation(Vector2 direction, bool instant = false, System.Action onComplete = null)
     {
-        if (arrow == null) return;
+        if (dirStick == null) return;
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         float targetZ = angle - 90f;
 
         if (instant)
         {
-            arrow.rotation = Quaternion.Euler(0f, 0f, targetZ);
+            dirStick.rotation = Quaternion.Euler(0f, 0f, targetZ);
             onComplete?.Invoke();
         }
         else
         {
-            arrow
+            dirStick
                 .DORotate(new Vector3(0f, 0f, targetZ), rotateDuration)
                 .SetEase(Ease.OutQuad)
                 .OnComplete(() => onComplete?.Invoke());
@@ -51,17 +76,43 @@ public class PlayerView : MonoBehaviour
 
     public void PlayHitEffect()
     {
-        // 예시
-        Debug.Log("Hit!");
+        if (spriteRenderer == null) return;
+
+        if (flashCoroutine != null)
+            StopCoroutine(flashCoroutine);
+
+        flashCoroutine = StartCoroutine(FlashWhite());
     }
 
-    public void PlayLevelUpEffect()
+    private IEnumerator FlashWhite()
     {
-        Debug.Log("Level Up!");
+        spriteRenderer.GetPropertyBlock(propertyBlock);
+        Color originalColor = spriteRenderer.color;
+
+        propertyBlock.SetColor(ColorID, Color.white * 2f);
+        spriteRenderer.SetPropertyBlock(propertyBlock);
+
+        yield return new WaitForSeconds(0.1f);
+
+        propertyBlock.SetColor(ColorID, originalColor);
+        spriteRenderer.SetPropertyBlock(propertyBlock);
+    }
+
+    public void UpdateHPGauge(int current, int max)
+    {
+        if (hpGauge == null) return;
+
+        hpGauge.Init(max);
+        hpGauge.UpdateValue(current);
     }
 
     public void Die()
     {
         Debug.Log("Player died.");
+    }
+
+    public void PlayLevelUpEffect()
+    {
+        Debug.Log("Level Up!");
     }
 }

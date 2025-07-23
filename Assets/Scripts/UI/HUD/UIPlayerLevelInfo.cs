@@ -1,5 +1,4 @@
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class UIPlayerLevelInfo : MonoBehaviour
@@ -8,12 +7,12 @@ public class UIPlayerLevelInfo : MonoBehaviour
     [SerializeField] private UIGauge expGauge;
     private void Start()
     {
-        var player = GameManager.Instance.Player; // È¤Àº PlayerController.Instance
+        var player = Player.Instance;
 
-        SetLevel(player.GetLevel());
+        SetLevel(player.Level);
 
-        var current = player.GetCurrentExp();
-        var max = player.GetExpToNextLevel();
+        var current = player.CurrentExp;
+        var max = player.ExpToNextLevel;
         SetExpGauge(current, max);
     }
 

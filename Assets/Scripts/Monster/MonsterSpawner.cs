@@ -9,7 +9,7 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private GameObject monsterPrefab;
     [SerializeField] private float spawnInterval = 2f;
     [SerializeField] private float spawnRadius = 8f;
-    [SerializeField] private int spawnDirections = 12; // 시계방향 방향 수
+    [SerializeField] private int spawnDirections = 12;
 
     [Header("Params")]
     [SerializeField] private float defaultMoveSpeed = 2f;
@@ -32,6 +32,7 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         Instance = this;
+        UpdateSpawnDirections(GameManager.Instance.Config.spawnDirections);
     }
 
     public void StartSpawn(Transform playerTransform)
@@ -39,7 +40,7 @@ public class MonsterSpawner : MonoBehaviour
         player = playerTransform;
         isSpawning = true;
         timer = 0f;
-        UpdateSpawnDirections();
+        UpdateSpawnDirections(GameManager.Instance.Config.spawnDirections);
     }
 
     public void StopSpawn()
@@ -59,12 +60,12 @@ public class MonsterSpawner : MonoBehaviour
         }
     }
 
-    private void UpdateSpawnDirections()
+    private void UpdateSpawnDirections(int count)
     {
         spawnDirs.Clear();
-        for (int i = 0; i < spawnDirections; i++)
+        for (int i = 0; i < count; i++)
         {
-            float angle = 180f - (360f / spawnDirections * i); // 기준: 9시(180도)
+            float angle = 180f - (360f / count * i);
             float rad = angle * Mathf.Deg2Rad;
             Vector2 dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)).normalized;
             spawnDirs.Add(dir);
@@ -73,20 +74,14 @@ public class MonsterSpawner : MonoBehaviour
 
     private void SpawnMonster()
     {
-        if (spawnDirs.Count == 0)
-            UpdateSpawnDirections();
+        var config = GameManager.Instance.Config;
 
         Vector2 direction = spawnDirs[Random.Range(0, spawnDirs.Count)];
         Vector2 offset = new Vector2(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f));
-        Vector2 spawnPos = (Vector2)player.position + direction * spawnRadius + offset;
+        Vector2 spawnPos = (Vector2)player.position + direction * config.spawnRadius + offset;
 
-        GameObject monsterObj = Instantiate(monsterPrefab, spawnPos, Quaternion.identity);
-        MonsterController controller = monsterObj.GetComponent<MonsterController>();
-        controller.Initialize(player, defaultMoveSpeed, defaultAttackRange, defaultHP);
-    }
-
-    public bool AllMonstersDefeated()
-    {
-        return GameObject.FindGameObjectsWithTag("Monster").Length == 0;
+        GameObject monsterObj = Instantiate(config.monsterPrefab, spawnPos, Quaternion.identity);
+        var controller = monsterObj.GetComponent<MonsterController>();
+        controller.Initialize(player, config.monsterMoveSpeed, config.monsterAttackRange, config.monsterHP);
     }
 }

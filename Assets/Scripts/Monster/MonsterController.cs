@@ -1,11 +1,17 @@
 using UnityEngine;
 
 [RequireComponent(typeof(MonsterView))]
-public class MonsterController : MonoBehaviour
+public class MonsterController : MonoBehaviour, IHittable
 {
     private MonsterModel model;
     private MonsterView view;
     private Transform target;
+
+    public bool IsDead => model.IsDead;
+    public float AttackRange => model.AttackRange;
+    public int CurrentHP => model.CurrentHP;
+    public int MaxHP => model.MaxHP;
+    public Transform GetTransform() => transform;
 
     public void Initialize(Transform targetTransform, float moveSpeed, float attackRange, int hp)
     {
@@ -35,13 +41,12 @@ public class MonsterController : MonoBehaviour
         model.TakeDamage(damage);
         view.PlayHitEffect();
 
+        view.UpdateHPGauge(model.CurrentHP, model.MaxHP);
+
         if (model.IsDead)
         {
-            GameManager.Instance.Player.GainExp(1);
+            Player.Instance.GainExp(1);
             view.Die();
         }
     }
-
-    public int GetCurrentHP() => model.CurrentHP;
-    public int GetMaxHP() => model.MaxHP;
 }

@@ -1,37 +1,39 @@
 using UnityEngine;
 
-public class PlayerShooter : MonoBehaviour
+[RequireComponent(typeof(EntityCombatUpdater))]
+public class PlayerShooter : MonoBehaviour, IProjectileShooter
 {
     [SerializeField] private Transform firePoint;
-    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private GameObject projectilePrefab;
 
-    [SerializeField] private float bulletSpeed = 5f;
-    [SerializeField] private float bulletLifeTime = 5f;
-    [SerializeField] private int bulletDamage = 1;
-
+    [SerializeField] private float projectileSpeed = 5f;
+    [SerializeField] private float projectileLifeTime = 5f;
+    [SerializeField] private int projectileDamage = 1;
     [SerializeField] private float fireInterval = 0.5f;
 
     private float fireTimer = 0f;
 
-    void Update()
+    public void TryShoot()
     {
         fireTimer += Time.deltaTime;
-
         if (fireTimer >= fireInterval)
         {
-            FireBullet();
+            FireProjectile();
             fireTimer = 0f;
         }
     }
 
-    private void FireBullet()
+    private void FireProjectile()
     {
-        if (bulletPrefab == null || firePoint == null)
-            return;
-
-        Vector2 fireDir = GameManager.Instance.Player.GetAimDirection();
-        GameObject bulletObj = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-        BulletView view = bulletObj.GetComponent<BulletView>();
-        new BulletController(view, fireDir, bulletSpeed, bulletLifeTime, bulletDamage);
+        Vector2 fireDir = Player.Instance.GetAimDirection();
+        ProjectileUtility.Fire(
+            projectilePrefab,
+            firePoint.position,
+            fireDir,
+            projectileSpeed,
+            projectileLifeTime,
+            projectileDamage,
+            LayerMask.GetMask("Monster")
+        );
     }
 }
