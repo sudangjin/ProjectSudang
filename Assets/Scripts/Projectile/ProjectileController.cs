@@ -13,10 +13,10 @@ public class ProjectileController
     private float maxDistance = 20f;
     private bool isDestroyed = false;
 
-    private IHittable targetLayer;
     private LayerMask targetMask;
+    private GameObject prefabRef;
 
-    public ProjectileController(ProjectileView view, Vector2 direction, float speed, float lifeTime, float damage, LayerMask targetMask)
+    public ProjectileController(ProjectileView view, Vector2 direction, float speed, float lifeTime, float damage, LayerMask targetMask, GameObject prefabRef)
     {
         this.view = view;
         Direction = direction.normalized;
@@ -24,6 +24,7 @@ public class ProjectileController
         LifeTime = lifeTime;
         Damage = damage;
         this.targetMask = targetMask;
+        this.prefabRef = prefabRef;
 
         startPosition = view.transform.position;
         this.view.Init(this);
@@ -56,9 +57,11 @@ public class ProjectileController
 
     private void DestroyProjectile()
     {
+        if (isDestroyed) return;
         isDestroyed = true;
+
         ProjectileUpdater.Instance.Unregister(this);
-        view.DestroySelf();
+        view.ReleaseToPool(prefabRef);
     }
 
     public bool IsTargetLayer(GameObject obj)

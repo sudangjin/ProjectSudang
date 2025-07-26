@@ -17,7 +17,10 @@ public static class ProjectileUtility
             return;
         }
 
-        GameObject projectileObj = Object.Instantiate(projectilePrefab, firePosition, Quaternion.identity);
+        GameObject projectileObj = ObjectPooler.Instance.Create(projectilePrefab, SceneHierarchy.Instance.projectilesParent);
+        projectileObj.transform.position = firePosition;
+        projectileObj.transform.rotation = Quaternion.identity;
+
         ProjectileView view = projectileObj.GetComponent<ProjectileView>();
 
         if (view == null)
@@ -26,6 +29,6 @@ public static class ProjectileUtility
             return;
         }
 
-        new ProjectileController(view, direction.normalized, speed, lifetime, damage, targetLayerMask);
+        new ProjectileController(view, direction.normalized, speed, lifetime, damage, targetLayerMask, projectilePrefab);
     }
 }

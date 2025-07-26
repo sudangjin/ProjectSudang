@@ -80,8 +80,10 @@ public class MonsterSpawner : MonoBehaviour
         Vector2 offset = new Vector2(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f));
         Vector2 spawnPos = (Vector2)player.position + direction * config.spawnRadius + offset;
 
-        GameObject monsterObj = Instantiate(config.monsterPrefab, spawnPos, Quaternion.identity);
+        GameObject monsterObj = ObjectPooler.Instance.Create(config.monsterPrefab, SceneHierarchy.Instance.monstersParent);
+        monsterObj.transform.position = spawnPos;
+
         var controller = monsterObj.GetComponent<MonsterController>();
-        controller.Initialize(player, config.monsterMoveSpeed, config.monsterAttackRange, config.monsterHP);
+        controller.Initialize(player, config.monsterMoveSpeed, config.monsterAttackRange, config.monsterHP, config.monsterPrefab);
     }
 }

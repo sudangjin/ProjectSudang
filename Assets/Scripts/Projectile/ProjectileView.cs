@@ -15,9 +15,9 @@ public class ProjectileView : MonoBehaviour
         transform.position += (Vector3)(direction * speed * Time.deltaTime);
     }
 
-    public void DestroySelf()
+    public void ReleaseToPool(GameObject prefab)
     {
-        Destroy(gameObject);
+        ObjectPooler.Instance.Release(prefab, gameObject, SceneHierarchy.Instance.projectilesParent);
     }
 
     private void RotateToDirection(Vector2 direction)

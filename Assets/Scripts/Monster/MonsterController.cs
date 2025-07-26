@@ -7,18 +7,31 @@ public class MonsterController : MonoBehaviour, IHittable
     private MonsterView view;
     private Transform target;
 
+    public GameObject OriginalPrefab { get; private set; } // 풀 반환 시 필요
+
     public bool IsDead => model.IsDead;
     public float AttackRange => model.AttackRange;
     public int CurrentHP => model.CurrentHP;
     public int MaxHP => model.MaxHP;
     public Transform GetTransform() => transform;
 
-    public void Initialize(Transform targetTransform, float moveSpeed, float attackRange, int hp)
+    public void Initialize(Transform targetTransform, float moveSpeed, float attackRange, int hp, GameObject prefabRef)
     {
         target = targetTransform;
         model = new MonsterModel(moveSpeed, attackRange, hp);
+
         view = GetComponent<MonsterView>();
         view.Init(this);
+
+        OriginalPrefab = prefabRef;
+        gameObject.SetActive(true);
+
+        // 사망 후 비활성화된 Collider/Rigidbody 복원
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = true;
+
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null) rb.simulated = true;
     }
 
     private void Update()
@@ -40,7 +53,6 @@ public class MonsterController : MonoBehaviour, IHittable
 
         model.TakeDamage(damage);
         view.PlayHitEffect();
-
         view.UpdateHPGauge(model.CurrentHP, model.MaxHP);
 
         if (model.IsDead)

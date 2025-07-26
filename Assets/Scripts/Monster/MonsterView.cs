@@ -32,9 +32,7 @@ public class MonsterView : MonoBehaviour
         }
 
         if (Player.Instance != null)
-        {
             playerTransform = Player.Instance.transform;
-        }
     }
 
     private void Update()
@@ -91,15 +89,18 @@ public class MonsterView : MonoBehaviour
             hpGauge.SetVisibility(false);
 
         Collider2D col = GetComponent<Collider2D>();
-        if (col != null) Destroy(col);
+        if (col != null) col.enabled = false;
 
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        if (rb != null) Destroy(rb);
+        if (rb != null) rb.simulated = false;
     }
 
     public void OnDeathAnimationEnd()
     {
-        Destroy(gameObject);
+        if (controller != null)
+        {
+            ObjectPooler.Instance.Release(controller.OriginalPrefab, gameObject, SceneHierarchy.Instance.monstersParent);
+        }
     }
 
     public void UpdateHPBarFacing(Transform cameraTransform)
