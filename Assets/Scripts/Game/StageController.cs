@@ -1,21 +1,32 @@
+using System.Collections;
 using UnityEngine;
 
 public class StageController : MonoBehaviour
 {
     public MonsterSpawner spawner;
+    private Transform player;
 
-    public void StartStage(Transform player)
+    public void StartStage(Transform playerTransform)
     {
-        spawner.StartSpawn(player);
+        player = playerTransform;
     }
 
-    public void OnFinishStage()
+    public void StartWave(int enemyCount, float spawnInterval)
     {
-        GameManager.Instance.Victory();
+        StartCoroutine(SpawnWave(enemyCount, spawnInterval));
+    }
+
+    private IEnumerator SpawnWave(int enemyCount, float spawnInterval)
+    {
+        for (int i = 0; i < enemyCount; i++)
+        {
+            spawner.SpawnMonster(player);
+            yield return new WaitForSeconds(spawnInterval);
+        }
     }
 
     public void OnPlayerDead()
     {
-        GameManager.Instance.GameOver();
+        GameSessionManager.Instance.GameOver();
     }
 }

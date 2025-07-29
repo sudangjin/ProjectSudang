@@ -13,6 +13,11 @@ public class PlayerModel
 
     public PlayerModel(int maxHP)
     {
+        Reset(maxHP);
+    }
+
+    public void Reset(int maxHP)
+    {
         MaxHP = maxHP;
         CurrentHP = maxHP;
         Level = 1;

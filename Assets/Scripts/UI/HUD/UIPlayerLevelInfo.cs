@@ -5,7 +5,8 @@ public class UIPlayerLevelInfo : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private UIGauge expGauge;
-    private void Start()
+
+    public void Init()
     {
         var player = Player.Instance;
 

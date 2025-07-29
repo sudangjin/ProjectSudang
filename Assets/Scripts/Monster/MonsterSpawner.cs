@@ -7,7 +7,6 @@ public class MonsterSpawner : MonoBehaviour
 
     [Header("Spawn")]
     [SerializeField] private GameObject monsterPrefab;
-    [SerializeField] private float spawnInterval = 2f;
     [SerializeField] private float spawnRadius = 8f;
     [SerializeField] private int spawnDirections = 12;
 
@@ -16,9 +15,6 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private float defaultAttackRange = 1.5f;
     [SerializeField] private int defaultHP = 3;
 
-    private Transform player;
-    private float timer;
-    private bool isSpawning;
     private List<Vector2> spawnDirs = new();
 
     public IReadOnlyList<Vector2> SpawnDirections => spawnDirs;
@@ -32,32 +28,22 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         Instance = this;
-        UpdateSpawnDirections(GameManager.Instance.Config.spawnDirections);
+        UpdateSpawnDirections(GameSessionManager.Instance.Config.spawnDirections);
     }
 
-    public void StartSpawn(Transform playerTransform)
+    public void SpawnMonster(Transform player)
     {
-        player = playerTransform;
-        isSpawning = true;
-        timer = 0f;
-        UpdateSpawnDirections(GameManager.Instance.Config.spawnDirections);
-    }
+        var config = GameSessionManager.Instance.Config;
 
-    public void StopSpawn()
-    {
-        isSpawning = false;
-    }
+        Vector2 direction = spawnDirs[Random.Range(0, spawnDirs.Count)];
+        Vector2 offset = new Vector2(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f));
+        Vector2 spawnPos = (Vector2)player.position + direction * config.spawnRadius + offset;
 
-    private void Update()
-    {
-        if (!isSpawning || player == null) return;
+        GameObject monsterObj = ObjectPooler.Instance.Create(config.monsterPrefab, SceneHierarchy.Instance.monstersParent);
+        monsterObj.transform.position = spawnPos;
 
-        timer += Time.deltaTime;
-        if (timer >= spawnInterval)
-        {
-            timer = 0f;
-            SpawnMonster();
-        }
+        var controller = monsterObj.GetComponent<MonsterController>();
+        controller.Initialize(player, config.monsterMoveSpeed, config.monsterAttackRange, config.monsterHP, config.monsterPrefab);
     }
 
     private void UpdateSpawnDirections(int count)
@@ -70,20 +56,5 @@ public class MonsterSpawner : MonoBehaviour
             Vector2 dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)).normalized;
             spawnDirs.Add(dir);
         }
-    }
-
-    private void SpawnMonster()
-    {
-        var config = GameManager.Instance.Config;
-
-        Vector2 direction = spawnDirs[Random.Range(0, spawnDirs.Count)];
-        Vector2 offset = new Vector2(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f));
-        Vector2 spawnPos = (Vector2)player.position + direction * config.spawnRadius + offset;
-
-        GameObject monsterObj = ObjectPooler.Instance.Create(config.monsterPrefab, SceneHierarchy.Instance.monstersParent);
-        monsterObj.transform.position = spawnPos;
-
-        var controller = monsterObj.GetComponent<MonsterController>();
-        controller.Initialize(player, config.monsterMoveSpeed, config.monsterAttackRange, config.monsterHP, config.monsterPrefab);
     }
 }

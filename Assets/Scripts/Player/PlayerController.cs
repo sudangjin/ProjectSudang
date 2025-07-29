@@ -15,10 +15,10 @@ public class PlayerController : MonoBehaviour, IHittable
     [SerializeField] private KeyCode rotateRightKey = KeyCode.RightArrow;
     [SerializeField] private float rotateRepeatDelay = 0.2f;
 
-    private int nowDir = 0;
     private IReadOnlyList<Vector2> directions;
-    private bool isRotating = false;
 
+    private int nowDir = 0;
+    private bool isRotating = false;
     private float rotateTimer = 0f;
     private bool isHoldingLeft = false;
     private bool isHoldingRight = false;
@@ -38,14 +38,21 @@ public class PlayerController : MonoBehaviour, IHittable
         }
 
         Instance = this;
-        
-        model = new PlayerModel(GameManager.Instance.Config.playerMaxHP);
-        view = GetComponent<PlayerView>();
-        view.Init(this);
     }
 
-    private void Start()
+    public void Init(int maxHP)
     {
+        if (model == null)
+            model = new PlayerModel(maxHP);
+        else
+            model.Reset(maxHP);
+
+        if (view == null)
+            view = GetComponent<PlayerView>();
+
+        view.Init(this);
+        ResetState();
+
         directions = MonsterSpawner.Instance?.SpawnDirections;
         if (directions == null || directions.Count == 0)
         {
@@ -57,6 +64,32 @@ public class PlayerController : MonoBehaviour, IHittable
         view.UpdateFacingByDirection(directions[nowDir]);
     }
 
+    public void ResetState()
+    {
+        ResetAimState();
+
+        view.UpdateHPGauge(model.CurrentHP, model.MaxHP);
+
+        if (directions != null && directions.Count > 0)
+        {
+            view.SetArrowRotation(directions[nowDir], instant: true);
+            view.UpdateFacingByDirection(directions[nowDir]);
+        }
+    }
+
+    public void Dispose()
+    {
+        ResetAimState();
+
+        if (view != null)
+            view.StopAllCoroutines();
+
+        model = null;
+        directions = null;
+
+        gameObject.SetActive(false);
+    }
+
     private void Update()
     {
         HandleAiming();
@@ -64,13 +97,12 @@ public class PlayerController : MonoBehaviour, IHittable
 
     private void HandleAiming()
     {
-        if (isRotating || directions.Count == 0)
+        if (isRotating || directions == null || directions.Count == 0)
             return;
 
         int total = directions.Count;
         int prev = nowDir;
 
-        // 한 번 누름 처리
         if (Input.GetKeyDown(rotateRightKey))
         {
             isHoldingRight = true;
@@ -86,7 +118,6 @@ public class PlayerController : MonoBehaviour, IHittable
             nowDir = (nowDir - 1 + total) % total;
         }
 
-        // 지속 입력 처리
         if (Input.GetKey(rotateRightKey))
         {
             isHoldingRight = true;
@@ -111,7 +142,6 @@ public class PlayerController : MonoBehaviour, IHittable
         }
         else
         {
-            // 키를 떼면 초기화
             if (isHoldingLeft || isHoldingRight)
             {
                 isHoldingLeft = false;
@@ -120,7 +150,6 @@ public class PlayerController : MonoBehaviour, IHittable
             }
         }
 
-        // 방향이 바뀐 경우 처리
         if (prev != nowDir)
         {
             isRotating = true;
@@ -133,16 +162,17 @@ public class PlayerController : MonoBehaviour, IHittable
         }
     }
 
-    public bool CanFire()
+    private void ResetAimState()
     {
-        return !isRotating;
+        nowDir = 0;
+        isRotating = false;
+        isHoldingLeft = false;
+        isHoldingRight = false;
+        rotateTimer = 0f;
     }
 
-    public Vector2 GetAimDirection()
-    {
-        return directions[nowDir];
-    }
-
+    public bool CanFire() => !isRotating;
+    public Vector2 GetAimDirection() => directions[nowDir];
     public float GetAimAngle()
     {
         Vector2 dir = GetAimDirection();
@@ -174,7 +204,7 @@ public class PlayerController : MonoBehaviour, IHittable
         if (model.IsDead)
         {
             view.Die();
-            GameManager.Instance.GameOver();
+            GameSessionManager.Instance.GameOver();
         }
     }
 
@@ -187,6 +217,7 @@ public class PlayerController : MonoBehaviour, IHittable
     public int GetCurrentHP() => model.CurrentHP;
     public int GetMaxHP() => model.MaxHP;
 }
+
 public static class Player
 {
     public static PlayerController Instance => PlayerController.Instance;

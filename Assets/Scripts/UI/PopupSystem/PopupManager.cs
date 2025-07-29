@@ -22,27 +22,27 @@ public class PopupManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
-    public void Open<T>() where T : PopupBase
+    public T Open<T>() where T : PopupBase
     {
-        Open(typeof(T).Name);
+        return (T)Open(typeof(T).Name);
     }
 
-    public void Open(string popupName)
+
+    public PopupBase Open(string popupName)
     {
         if (IsHigherPriorityPopupOpen(popupName))
         {
             popupQueue.Enqueue(popupName);
-            return;
+            return null;
         }
 
         GameObject instance = GetPopupInstance(popupName, out PopupBase popup);
         if (popup == null)
         {
             Debug.LogError($"Popup {popupName} 에 PopupBase가 없습니다.");
-            return;
+            return null;
         }
 
         activePopupStack.Push(popup);
@@ -51,6 +51,8 @@ public class PopupManager : MonoBehaviour
             Time.timeScale = 0;
 
         popup.OnOpen(() => ClosePopup(popupName, popup));
+
+        return popup;
     }
 
     private void ClosePopup(string popupName, PopupBase popup)

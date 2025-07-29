@@ -8,6 +8,9 @@ public class GameConfig : ScriptableObject
 
     [Header("Spawn")]
     public int spawnDirections = 12;
+    public float waitTime = 3f;
+    public int baseEnemyCount = 20;
+    public int enemyIncreasePerWave = 2;
 
     [Header("Monster")]
     public GameObject monsterPrefab;

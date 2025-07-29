@@ -10,10 +10,9 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private float rotateDuration = 0.15f;
 
     [SerializeField] private UIGauge hpGauge;
-    [SerializeField] private SpriteRenderer spriteRenderer; // 추가 필요
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
     private bool currentFacingLeft = false;
-
     private Coroutine flashCoroutine;
     private MaterialPropertyBlock propertyBlock;
     private static readonly int ColorID = Shader.PropertyToID("_Color");

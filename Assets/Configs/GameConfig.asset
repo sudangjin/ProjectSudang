@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c3611748566ed94e843ca2590205a1e, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
-  playerMaxHP: 100
+  playerMaxHP: 20
   spawnDirections: 12
   monsterPrefab: {fileID: 2752260645269809559, guid: ba7f996b4d1486b48b0e4070340a51c7,
     type: 3}
   spawnInterval: 2
   spawnRadius: 8
-  monsterMoveSpeed: 2
+  monsterMoveSpeed: 1.2
   monsterAttackRange: 1.5
-  monsterHP: 3
+  monsterHP: 2

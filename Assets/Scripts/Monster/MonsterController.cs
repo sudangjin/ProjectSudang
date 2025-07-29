@@ -58,6 +58,9 @@ public class MonsterController : MonoBehaviour, IHittable
         if (model.IsDead)
         {
             Player.Instance.GainExp(1);
+            GameSessionManager.Instance.AddScore(10);
+            GameSessionManager.Instance.OnEnemyKilled();
+
             view.Die();
         }
     }
