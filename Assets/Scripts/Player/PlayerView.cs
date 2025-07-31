@@ -30,8 +30,8 @@ public class PlayerView : MonoBehaviour
         {
             int max = controller.GetMaxHP();
             int current = controller.GetCurrentHP();
-            hpGauge.Init(max);
-            hpGauge.UpdateValue(current);
+            hpGauge.Init();
+            hpGauge.UpdateValue(current, max);
         }
 
         if (spriteRenderer == null)
@@ -101,8 +101,8 @@ public class PlayerView : MonoBehaviour
     {
         if (hpGauge == null) return;
 
-        hpGauge.Init(max);
-        hpGauge.UpdateValue(current);
+        hpGauge.Init();
+        hpGauge.UpdateValue(current, max);
     }
 
     public void Die()

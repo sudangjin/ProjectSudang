@@ -11,7 +11,7 @@ public class GameSessionManager : MonoBehaviour
     [SerializeField] private PlayerController playerController;
     [SerializeField] private InGameHUDManager ingameHUDManager;
 
-    private long score = 0;
+    public long Score { get; private set; }
     private int wave = 0;
     private int killedEnemies = 0;
     private int totalEnemies = 0;
@@ -31,7 +31,7 @@ public class GameSessionManager : MonoBehaviour
 
     public void Init()
     {
-        score = 0;
+        Score = 0;
         wave = 0;
         State = GameState.WaitingWave;
 
@@ -52,6 +52,8 @@ public class GameSessionManager : MonoBehaviour
 
     private IEnumerator WaveLoop()
     {
+        int mapID = 1;
+
         while (true)
         {
             wave++;
@@ -67,7 +69,7 @@ public class GameSessionManager : MonoBehaviour
             State = GameState.InWave;
             GameEvent.Publish(EventKeys.GameStateChanged, new GameStatePayload(GameState.InWave, current: killedEnemies, max: totalEnemies));
 
-            stageController.StartWave(totalEnemies, Config.spawnInterval);
+            stageController.StartWave(wave, totalEnemies, Config.spawnInterval, mapID);
 
             while (killedEnemies < totalEnemies && State != GameState.GameOver)
                 yield return null;
@@ -102,9 +104,9 @@ public class GameSessionManager : MonoBehaviour
             yield return null;
     }
 
-    public void AddScore(int amount)
+    public void AddScore(long amount)
     {
-        score += amount;
-        GameEvent.Publish(EventKeys.GameScoreChanged, score);
+        Score += (amount * wave);
+        GameEvent.Publish(EventKeys.GameScoreChanged, Score);
     }
 }

@@ -47,8 +47,8 @@ public class UIPlayerLevelInfo : MonoBehaviour
 
     public void SetExpGauge(int current, int max)
     {
-        expGauge.Init(max);
-        expGauge.UpdateValue(current);
+        expGauge.Init();
+        expGauge.UpdateValue(current, max);
     }
 
     public void SetVisible(bool isVisible)

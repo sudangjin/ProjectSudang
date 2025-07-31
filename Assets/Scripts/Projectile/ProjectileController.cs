@@ -6,25 +6,24 @@ public class ProjectileController
     public float Speed { get; private set; }
     public float LifeTime { get; private set; }
     public float Damage { get; private set; }
+    public GameObject PrefabReference { get; set; }
 
     private ProjectileView view;
     private float timer;
     private Vector3 startPosition;
     private float maxDistance = 20f;
     private bool isDestroyed = false;
-
     private LayerMask targetMask;
-    private GameObject prefabRef;
 
-    public ProjectileController(ProjectileView view, Vector2 direction, float speed, float lifeTime, float damage, LayerMask targetMask, GameObject prefabRef)
+    public ProjectileController(ProjectileView view, ProjectileData projectile, Vector2 direction, float damage, LayerMask targetMask, GameObject prefabRef)
     {
         this.view = view;
         Direction = direction.normalized;
-        Speed = speed;
-        LifeTime = lifeTime;
+        Speed = projectile.Speed;
+        LifeTime = projectile.LifeTime;
         Damage = damage;
         this.targetMask = targetMask;
-        this.prefabRef = prefabRef;
+        PrefabReference = prefabRef;
 
         startPosition = view.transform.position;
         this.view.Init(this);
@@ -44,13 +43,12 @@ public class ProjectileController
             return;
         }
 
-        view.Move(Direction, Speed);
+        view.transform.position += (Vector3)(Direction * Speed * Time.deltaTime);
     }
 
     public void OnHit(IHittable target)
     {
         if (isDestroyed) return;
-
         target.TakeDamage((int)Damage);
         DestroyProjectile();
     }
@@ -61,7 +59,7 @@ public class ProjectileController
         isDestroyed = true;
 
         ProjectileUpdater.Instance.Unregister(this);
-        view.ReleaseToPool(prefabRef);
+        view.ReleaseToPool(PrefabReference);
     }
 
     public bool IsTargetLayer(GameObject obj)

@@ -7,26 +7,53 @@ public class MonsterController : MonoBehaviour, IHittable
     private MonsterView view;
     private Transform target;
 
-    public GameObject OriginalPrefab { get; private set; } // 풀 반환 시 필요
+    public GameObject PrefabReference { get; set; }
 
     public bool IsDead => model.IsDead;
     public float AttackRange => model.AttackRange;
     public int CurrentHP => model.CurrentHP;
     public int MaxHP => model.MaxHP;
+    public int ProjectileID => model.ProjectileID;
+    public int Damage => model.Damage;
+    public float AttackSpeed => model.AttackSpeed;
     public Transform GetTransform() => transform;
 
-    public void Initialize(Transform targetTransform, float moveSpeed, float attackRange, int hp, GameObject prefabRef)
+    private void Awake()
+    {
+        view = GetComponent<MonsterView>();
+    }
+
+    public void Initialize(
+        Transform targetTransform,
+        float moveSpeed,
+        float attackRange,
+        int hp,
+        int damage,
+        float attackSpeed,
+        int exp,
+        long score,
+        MonsterData.MovementType moveType,
+        int projectileID,
+        bool isBoss)
     {
         target = targetTransform;
-        model = new MonsterModel(moveSpeed, attackRange, hp);
 
-        view = GetComponent<MonsterView>();
+        model = new MonsterModel(
+            moveSpeed: moveSpeed,
+            attackRange: attackRange,
+            maxHP: hp,
+            damage: damage,
+            attackSpeed: attackSpeed,
+            exp: exp,
+            score: score,
+            moveType: moveType,
+            projectileID: projectileID,
+            isBoss: isBoss
+            );
+
         view.Init(this);
-
-        OriginalPrefab = prefabRef;
         gameObject.SetActive(true);
 
-        // 사망 후 비활성화된 Collider/Rigidbody 복원
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = true;
 
@@ -43,7 +70,12 @@ public class MonsterController : MonoBehaviour, IHittable
         if (distance > model.AttackRange)
         {
             Vector2 direction = (target.position - transform.position).normalized;
-            view.Move(direction, model.MoveSpeed);
+            transform.position += (Vector3)(direction * model.MoveSpeed * Time.deltaTime);
+            view.UpdateMoveState(true);
+        }
+        else
+        {
+            view.UpdateMoveState(false);
         }
     }
 
@@ -57,11 +89,15 @@ public class MonsterController : MonoBehaviour, IHittable
 
         if (model.IsDead)
         {
-            Player.Instance.GainExp(1);
-            GameSessionManager.Instance.AddScore(10);
+            Player.Instance.GainExp(model.EXP);
+            GameSessionManager.Instance.AddScore(model.Score);
             GameSessionManager.Instance.OnEnemyKilled();
-
             view.Die();
         }
+    }
+
+    public void PlayAttackMotion()
+    {
+        view.PlayAttackMotion();
     }
 }

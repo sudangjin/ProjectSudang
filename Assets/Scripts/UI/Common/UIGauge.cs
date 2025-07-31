@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 [ExecuteAlways]
@@ -5,6 +6,7 @@ public class UIGauge : MonoBehaviour
 {
     [SerializeField] private RectTransform fillArea;
     [SerializeField] private RectTransform gaugeRoot;
+    [SerializeField] private TextMeshProUGUI progressText;
 
     public float paddingLeft = 0f;
     public float paddingRight = 0f;
@@ -15,17 +17,15 @@ public class UIGauge : MonoBehaviour
     [Range(0f, 1f)][SerializeField] private float debugRatio = 1f;
     [SerializeField] private bool debugMode = false;
 
-    private int maxValue = 100;
 
-    public void Init(int maxValue)
+    public void Init()
     {
-        this.maxValue = Mathf.Max(1, maxValue);
         SetRatio(1f);
     }
 
-    public void UpdateValue(int current)
+    public void UpdateValue(float current, float maxValue)
     {
-        float ratio = Mathf.Clamp01((float)current / maxValue);
+        float ratio = Mathf.Clamp01(current / maxValue);
         SetRatio(ratio);
     }
 
@@ -58,6 +58,11 @@ public class UIGauge : MonoBehaviour
 
         fillArea.offsetMin = Vector2.zero;
         fillArea.offsetMax = Vector2.zero;
+    }
+
+    public void SetProgress(float ratio)
+    {
+        progressText.text = ratio.ToPercentFormat(1);
     }
 
 #if UNITY_EDITOR

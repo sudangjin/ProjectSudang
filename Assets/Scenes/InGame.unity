@@ -155,9 +155,6 @@ MonoBehaviour:
   stageController: {fileID: 100532012}
   playerController: {fileID: 1203715756}
   ingameHUDManager: {fileID: 996683800}
-  waveDelay: 5
-  baseEnemyCount: 20
-  enemyIncreasePerWave: 2
 --- !u!4 &13985295
 Transform:
   m_ObjectHideFlags: 0
@@ -203,7 +200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dac07fdda2ec443409232330b5e98b44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterPrefab: {fileID: 2752260645269809559, guid: ba7f996b4d1486b48b0e4070340a51c7,
+  monsterPrefab: {fileID: 2752260645269809559, guid: 34839e6aab5d5344bbaa46e0977482f4,
     type: 3}
   spawnRadius: 8
   spawnDirections: 16
@@ -1082,8 +1079,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: HUDButtonHandler, Assembly-CSharp
+      - m_Target: {fileID: 996683800}
+        m_TargetAssemblyTypeName: InGameHUDManager, Assembly-CSharp
         m_MethodName: OnClickPause
         m_Mode: 1
         m_Arguments:
@@ -5303,6 +5300,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fillArea: {fileID: 7223417661388618043}
   gaugeRoot: {fileID: 8299750671929938029}
+  progressText: {fileID: 0}
   paddingLeft: 16
   paddingRight: 16
   paddingTop: 11

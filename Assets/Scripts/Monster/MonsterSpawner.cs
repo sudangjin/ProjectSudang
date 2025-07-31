@@ -5,18 +5,10 @@ public class MonsterSpawner : MonoBehaviour
 {
     public static MonsterSpawner Instance { get; private set; }
 
-    [Header("Spawn")]
-    [SerializeField] private GameObject monsterPrefab;
     [SerializeField] private float spawnRadius = 8f;
     [SerializeField] private int spawnDirections = 12;
 
-    [Header("Params")]
-    [SerializeField] private float defaultMoveSpeed = 2f;
-    [SerializeField] private float defaultAttackRange = 1.5f;
-    [SerializeField] private int defaultHP = 3;
-
     private List<Vector2> spawnDirs = new();
-
     public IReadOnlyList<Vector2> SpawnDirections => spawnDirs;
 
     private void Awake()
@@ -31,7 +23,7 @@ public class MonsterSpawner : MonoBehaviour
         UpdateSpawnDirections(GameSessionManager.Instance.Config.spawnDirections);
     }
 
-    public void SpawnMonster(Transform player)
+    public void SpawnMonster(Transform player, MonsterData monster)
     {
         var config = GameSessionManager.Instance.Config;
 
@@ -39,11 +31,27 @@ public class MonsterSpawner : MonoBehaviour
         Vector2 offset = new Vector2(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f));
         Vector2 spawnPos = (Vector2)player.position + direction * config.spawnRadius + offset;
 
-        GameObject monsterObj = ObjectPooler.Instance.Create(config.monsterPrefab, SceneHierarchy.Instance.monstersParent);
+        GameObject prefab = Resources.Load<GameObject>($"Prefabs/Monster/{monster.PrefabName}");
+        if (prefab == null) return;
+
+        GameObject monsterObj = ObjectPooler.Instance.Create(prefab, SceneHierarchy.Instance.monstersParent);
         monsterObj.transform.position = spawnPos;
 
         var controller = monsterObj.GetComponent<MonsterController>();
-        controller.Initialize(player, config.monsterMoveSpeed, config.monsterAttackRange, config.monsterHP, config.monsterPrefab);
+        controller.PrefabReference = prefab;
+        controller.Initialize(
+            player,
+            monster.MoveSpeed,
+            monster.AttackRange,
+            monster.HP,
+            monster.Damage,
+            monster.AttackSpeed,
+            monster.EXP,
+            monster.Score,
+            monster.MoveType,
+            monster.ProjectileID,
+            monster.IsBoss
+        );
     }
 
     private void UpdateSpawnDirections(int count)

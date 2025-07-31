@@ -6,9 +6,6 @@ public class PlayerShooter : MonoBehaviour, IProjectileShooter
     [SerializeField] private Transform firePoint;
     [SerializeField] private GameObject projectilePrefab;
 
-    [SerializeField] private float projectileSpeed = 5f;
-    [SerializeField] private float projectileLifeTime = 5f;
-    [SerializeField] private int projectileDamage = 1;
     [SerializeField] private float fireInterval = 0.5f;
 
     private float fireTimer = 0f;
@@ -25,14 +22,13 @@ public class PlayerShooter : MonoBehaviour, IProjectileShooter
 
     private void FireProjectile()
     {
+        var projectile = ProjectileData.Get(6);
         Vector2 fireDir = Player.Instance.GetAimDirection();
         ProjectileUtility.Fire(
-            projectilePrefab,
+            projectile,
             firePoint.position,
             fireDir,
-            projectileSpeed,
-            projectileLifeTime,
-            projectileDamage,
+            1,
             LayerMask.GetMask("Monster")
         );
     }

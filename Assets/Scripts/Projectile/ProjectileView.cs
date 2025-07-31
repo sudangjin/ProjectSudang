@@ -10,11 +10,6 @@ public class ProjectileView : MonoBehaviour
         RotateToDirection(controller.Direction);
     }
 
-    public void Move(Vector2 direction, float speed)
-    {
-        transform.position += (Vector3)(direction * speed * Time.deltaTime);
-    }
-
     public void ReleaseToPool(GameObject prefab)
     {
         ObjectPooler.Instance.Release(prefab, gameObject, SceneHierarchy.Instance.projectilesParent);
@@ -31,8 +26,6 @@ public class ProjectileView : MonoBehaviour
         if (!controller.IsTargetLayer(collision.gameObject)) return;
 
         if (collision.TryGetComponent(out IHittable target))
-        {
             controller.OnHit(target);
-        }
     }
 }

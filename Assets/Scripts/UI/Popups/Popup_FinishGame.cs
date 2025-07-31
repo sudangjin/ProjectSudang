@@ -13,6 +13,7 @@ public class Popup_FinishGame : PopupBase
 
     public void Init(Action okCallback)
     {
+        txtScore.text = GameSessionManager.Instance.Score.ToMoneyFormat();
         callback = okCallback;
     }
 

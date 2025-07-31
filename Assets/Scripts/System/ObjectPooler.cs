@@ -43,6 +43,13 @@ public class ObjectPooler : MonoBehaviour
 
     public void Release(GameObject prefab, GameObject obj, Transform parent)
     {
+        if (prefab == null)
+        {
+            Debug.LogError($"[ObjectPooler] Prefab reference missing for {obj.name}");
+            Destroy(obj);
+            return;
+        }
+
         if (!prefabPools.TryGetValue(prefab, out var poolTransform))
         {
             string poolName = prefab.name + "_Pool";
@@ -53,7 +60,13 @@ public class ObjectPooler : MonoBehaviour
 
         obj.SetActive(false);
         obj.transform.SetParent(prefabPools[prefab], false);
-        pools[prefab].Push(obj);
+
+        if (!pools.TryGetValue(prefab, out var stack))
+        {
+            stack = new Stack<GameObject>();
+            pools[prefab] = stack;
+        }
+        stack.Push(obj);
     }
 
     public void ClearPool(GameObject prefab)

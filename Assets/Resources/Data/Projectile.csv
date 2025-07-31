@@ -1,0 +1,7 @@
+﻿ID,Name,Speed,LifeTime,PrefabName
+1,털 날리기,2,5,Monster/M_Proj_001
+2,음파,4,5,Monster/M_Proj_002
+3,수상한 덩어리,2,5,Monster/M_Proj_003
+4,거품,1,5,Monster/M_Proj_004
+5,참격,2,5,Monster/M_Proj_005
+6,땅콩탄,2,5,Player/P_Proj_001

@@ -10,10 +10,8 @@ public class MonsterView : MonoBehaviour
     [SerializeField] private UIGauge hpGauge;
 
     private Transform playerTransform;
-
     private MaterialPropertyBlock propertyBlock;
     private static readonly int ColorID = Shader.PropertyToID("_Color");
-
     private Coroutine flashCoroutine;
 
     private void Awake()
@@ -27,7 +25,7 @@ public class MonsterView : MonoBehaviour
 
         if (hpGauge != null)
         {
-            hpGauge.Init(controller.MaxHP);
+            hpGauge.Init();
             hpGauge.SetVisibility(controller.CurrentHP < controller.MaxHP);
         }
 
@@ -44,11 +42,6 @@ public class MonsterView : MonoBehaviour
             FlipByPlayerPosition(playerTransform.position);
     }
 
-    public void Move(Vector2 direction, float speed)
-    {
-        transform.position += (Vector3)(direction * speed * Time.deltaTime);
-    }
-
     public void PlayHitEffect()
     {
         if (spriteRenderer == null) return;
@@ -62,8 +55,7 @@ public class MonsterView : MonoBehaviour
     public void UpdateHPGauge(int current, int max)
     {
         if (hpGauge == null) return;
-
-        hpGauge.UpdateValue(current);
+        hpGauge.UpdateValue(current, max);
         hpGauge.SetVisibility(current < max);
     }
 
@@ -98,9 +90,7 @@ public class MonsterView : MonoBehaviour
     public void OnDeathAnimationEnd()
     {
         if (controller != null)
-        {
-            ObjectPooler.Instance.Release(controller.OriginalPrefab, gameObject, SceneHierarchy.Instance.monstersParent);
-        }
+            ObjectPooler.Instance.Release(controller.PrefabReference, gameObject, SceneHierarchy.Instance.monstersParent);
     }
 
     public void UpdateHPBarFacing(Transform cameraTransform)
@@ -109,10 +99,19 @@ public class MonsterView : MonoBehaviour
             hpGauge.FaceToCamera(cameraTransform);
     }
 
+    public void UpdateMoveState(bool isMove)
+    {
+        animator.SetBool("IsMove", isMove);
+    }
+
+    public void PlayAttackMotion()
+    {
+        animator.SetTrigger("Attack");
+    }
+
     private void FlipByPlayerPosition(Vector3 playerPosition)
     {
         if (spriteRenderer == null) return;
-
         bool isRightSide = transform.position.x > playerPosition.x;
         spriteRenderer.flipX = isRightSide;
     }

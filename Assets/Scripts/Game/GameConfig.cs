@@ -1,4 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
+[System.Serializable]
+public class MonsterSpawnEntry
+{
+    public int grade;
+    public float ratio;
+}
 
 [CreateAssetMenu(fileName = "GameConfig", menuName = "Game/GameConfig", order = 1)]
 public class GameConfig : ScriptableObject
@@ -13,10 +20,9 @@ public class GameConfig : ScriptableObject
     public int enemyIncreasePerWave = 2;
 
     [Header("Monster")]
-    public GameObject monsterPrefab;
     public float spawnInterval = 2f;
     public float spawnRadius = 8f;
-    public float monsterMoveSpeed = 2f;
-    public float monsterAttackRange = 1.5f;
-    public int monsterHP = 3;
+
+    [Header("Monster Spawn Ratio")]
+    public List<MonsterSpawnEntry> monsterSpawnRatios = new List<MonsterSpawnEntry>();
 }
