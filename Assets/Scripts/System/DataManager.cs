@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 public class DataManager
 {
@@ -12,10 +13,31 @@ public class DataManager
 
     private readonly Dictionary<int, MonsterData> monsterDataDic = new();
     private readonly Dictionary<int, ProjectileData> projectileDataDic = new();
+    private readonly Dictionary<int, UpgradeData> upgradeDataDic = new();
+    private readonly Dictionary<int, WeaponData> weaponDataDic = new();
+    private readonly Dictionary<int, CharacterData> characterDataDic = new();
 
     private readonly Dictionary<int, MapMonsterGroup> mapMonsterGroups = new();
 
-    private DataManager() { }
+    private readonly List<IDictionary> allDataDictionaries;
+
+    public IEnumerable<MonsterData> GetAllMonsters() => monsterDataDic.Values;
+    public IEnumerable<ProjectileData> GetAllProjectiles() => projectileDataDic.Values;
+    public IEnumerable<UpgradeData> GetAllUpgrades() => upgradeDataDic.Values;
+    public IEnumerable<WeaponData> GetAllWeapons() => weaponDataDic.Values;
+    public IEnumerable<CharacterData> GetAllCharacters() => characterDataDic.Values;
+
+    private DataManager()
+    {
+        allDataDictionaries = new List<IDictionary>
+        {
+            monsterDataDic,
+            projectileDataDic,
+            upgradeDataDic,
+            weaponDataDic,
+            characterDataDic
+        };
+    }
 
     public IEnumerator InitAsync(System.Action<float> onProgress)
     {
@@ -31,6 +53,7 @@ public class DataManager
             createData: (values, columns) => new MonsterData(
                 id: values.GetInt(columns, "ID"),
                 name: values.GetString(columns, "Name"),
+                desc: values.GetString(columns, "Desc"),
                 hp: values.GetInt(columns, "HP"),
                 damage: values.GetInt(columns, "Damage"),
                 moveSpeed: values.GetFloat(columns, "MoveSpeed"),
@@ -42,7 +65,7 @@ public class DataManager
                 mapID: values.GetInt(columns, "MapID"),
                 grade: values.GetInt(columns, "Grade"),
                 isBoss: values.GetBool(columns, "IsBoss"),
-                moveType: values.GetEnum<MonsterData.MovementType>(columns, "MoveType"),
+                moveType: values.GetEnum<MovementType>(columns, "MoveType"),
                 projectileID: values.GetInt(columns, "ProjectileID")
             ),
             getKey: data => data.ID,
@@ -55,12 +78,66 @@ public class DataManager
             createData: (values, columns) => new ProjectileData(
                 id: values.GetInt(columns, "ID"),
                 name: values.GetString(columns, "Name"),
+                desc: values.GetString(columns, "Desc"),
                 speed: values.GetFloat(columns, "Speed"),
                 lifeTime: values.GetFloat(columns, "LifeTime"),
                 prefabName: values.GetString(columns, "PrefabName")
             ),
             getKey: data => data.ID,
             targetDict: projectileDataDic,
+            onProgress: onProgress
+        );
+
+        yield return LoadCsvDataAsync(
+            fileName: "Upgrade",
+            createData: (values, columns) => new UpgradeData(
+                id: values.GetInt(columns, "ID"),
+                name: values.GetString(columns, "Name"),
+                desc: values.GetString(columns, "Desc"),
+                type: values.GetEnum<UpgradeType>(columns, "Type"),
+                requireWeaponID: values.GetInt(columns, "RequireWeaponID"),
+                requireUpgradeRaw: values.GetString(columns, "RequireUpgrade"),
+                maxLevel: values.GetInt(columns, "MaxLevel"),
+                value: values.GetFloat(columns, "Value")
+            ),
+            getKey: data => data.ID,
+            targetDict: upgradeDataDic,
+            onProgress: onProgress
+        );
+
+        yield return LoadCsvDataAsync(
+            fileName: "Weapon",
+            createData: (values, columns) => new WeaponData(
+                id: values.GetInt(columns, "ID"),
+                name: values.GetString(columns, "Name"),
+                desc: values.GetString(columns, "Desc"),
+                type: values.GetEnum<WeaponType>(columns, "Type"),
+                damage: values.GetInt(columns, "Damage"),
+                speed: values.GetFloat(columns, "Speed"),
+                lifeTime: values.GetFloat(columns, "LifeTime"),
+                attackSpeed: values.GetFloat(columns, "AttackSpeed"),
+                prefabName: values.GetString(columns, "PrefabName")
+            ),
+            getKey: data => data.ID,
+            targetDict: weaponDataDic,
+            onProgress: onProgress
+        );
+
+        yield return LoadCsvDataAsync(
+            fileName: "Character",
+            createData: (values, columns) => new CharacterData(
+                id: values.GetInt(columns, "ID"),
+                name: values.GetString(columns, "Name"),
+                desc: values.GetString(columns, "Desc"),
+                startWeaponID: values.GetInt(columns, "StartWeaponID"),
+                startUpgradeID: values.GetInt(columns, "StartUpgradeID"),
+                hp: values.GetInt(columns, "HP"),
+                autoHeal: values.GetInt(columns, "AutoHeal"),
+                turnSpeed: values.GetFloat(columns, "TurnSpeed"),
+                direction: values.GetInt(columns, "Direction")
+            ),
+            getKey: data => data.ID,
+            targetDict: characterDataDic,
             onProgress: onProgress
         );
 
@@ -84,7 +161,6 @@ public class DataManager
         }
 
         string[] lines = csv.text.Split('\n');
-
         if (lines.Length <= 1)
             yield break;
 
@@ -100,7 +176,9 @@ public class DataManager
             string line = lines[i].Trim();
             if (string.IsNullOrEmpty(line)) continue;
 
-            string[] values = line.Split(',');
+            string[] values = Regex.Split(line, ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+            for (int v = 0; v < values.Length; v++)
+                values[v] = values[v].Trim().Trim('"');
 
             T data = createData(values, columnIndex);
             int key = getKey(data);
@@ -170,11 +248,35 @@ public class DataManager
         return null;
     }
 
+    public UpgradeData GetUpgradeData(int id)
+    {
+        if (upgradeDataDic.TryGetValue(id, out var data))
+            return data;
+        Debug.LogWarning($"[DataManager] Upgrade ID {id} not found.");
+        return null;
+    }
+
+    public WeaponData GetWeaponData(int id)
+    {
+        if (weaponDataDic.TryGetValue(id, out var data))
+            return data;
+        Debug.LogWarning($"[DataManager] Weapon ID {id} not found.");
+        return null;
+    }
+
+    public CharacterData GetCharacterData(int id)
+    {
+        if (characterDataDic.TryGetValue(id, out var data))
+            return data;
+        Debug.LogWarning($"[DataManager] Character ID {id} not found.");
+        return null;
+    }
+
     public void ForceReload()
     {
         initialized = false;
-        monsterDataDic.Clear();
-        projectileDataDic.Clear();
+        foreach (var dict in allDataDictionaries)
+            dict.Clear();
         mapMonsterGroups.Clear();
     }
 }

@@ -32,6 +32,7 @@ public class PlayerView : MonoBehaviour
             int current = controller.GetCurrentHP();
             hpGauge.Init();
             hpGauge.UpdateValue(current, max);
+            hpGauge.SetProgress(current, max);
         }
 
         if (spriteRenderer == null)
@@ -103,6 +104,7 @@ public class PlayerView : MonoBehaviour
 
         hpGauge.Init();
         hpGauge.UpdateValue(current, max);
+        hpGauge.SetProgress(current, max);
     }
 
     public void Die()

@@ -1,7 +1,7 @@
-﻿ID,Name,Speed,LifeTime,PrefabName
-1,털 날리기,2,5,Monster/M_Proj_001
-2,음파,4,5,Monster/M_Proj_002
-3,수상한 덩어리,2,5,Monster/M_Proj_003
-4,거품,1,5,Monster/M_Proj_004
-5,참격,2,5,Monster/M_Proj_005
-6,땅콩탄,2,5,Player/P_Proj_001
+﻿ID,Name,Speed,LifeTime,PrefabName,Desc
+1,털 날리기,2,5,Monster/M_Proj_001,쥐가 사용하는 기술
+2,음파,4,5,Monster/M_Proj_002,박쥐가 사용하는 기술
+3,수상한 덩어리,2,5,Monster/M_Proj_003,슬라임이 사용하는 기술
+4,거품,1,5,Monster/M_Proj_004,게가 사용하는 기술
+5,참격,2,5,Monster/M_Proj_005,골렘이 사용하는 기술
+6,땅콩탄,2,5,Player/P_Proj_001,플레이어가 사용하는 기술(임시)

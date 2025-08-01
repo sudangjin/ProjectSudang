@@ -10,11 +10,7 @@ public class MonsterSpawnEntry
 [CreateAssetMenu(fileName = "GameConfig", menuName = "Game/GameConfig", order = 1)]
 public class GameConfig : ScriptableObject
 {
-    [Header("Player")]
-    public int playerMaxHP = 100;
-
     [Header("Spawn")]
-    public int spawnDirections = 12;
     public float waitTime = 3f;
     public int baseEnemyCount = 20;
     public int enemyIncreasePerWave = 2;
@@ -25,4 +21,8 @@ public class GameConfig : ScriptableObject
 
     [Header("Monster Spawn Ratio")]
     public List<MonsterSpawnEntry> monsterSpawnRatios = new List<MonsterSpawnEntry>();
+
+    [Header("Experience Orbs")]
+    public int expOrbMaxCount = 100;
+    public List<Color> expColors = new List<Color>();
 }

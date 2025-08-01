@@ -39,7 +39,7 @@ public class LobbyManager : MonoBehaviour
             var gameSessionManager = FindObjectOfType<GameSessionManager>();
             if (gameSessionManager != null)
             {
-                gameSessionManager.Init();
+                gameSessionManager.Init(1);
             }
 
             SceneManager.sceneLoaded -= OnSceneLoaded;

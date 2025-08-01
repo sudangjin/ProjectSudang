@@ -6,14 +6,15 @@ public class PlayerShooter : MonoBehaviour, IProjectileShooter
     [SerializeField] private Transform firePoint;
     [SerializeField] private GameObject projectilePrefab;
 
-    [SerializeField] private float fireInterval = 0.5f;
-
     private float fireTimer = 0f;
 
     public void TryShoot()
     {
+        var weaponStat = UpgradeManager.Instance.WeaponStat;
+        if (weaponStat == null) return;
+
         fireTimer += Time.deltaTime;
-        if (fireTimer >= fireInterval)
+        if (fireTimer >= 1 / weaponStat.AttackSpeed)
         {
             FireProjectile();
             fireTimer = 0f;
@@ -22,13 +23,15 @@ public class PlayerShooter : MonoBehaviour, IProjectileShooter
 
     private void FireProjectile()
     {
-        var projectile = ProjectileData.Get(6);
+        var weaponStat = UpgradeManager.Instance.WeaponStat;
         Vector2 fireDir = Player.Instance.GetAimDirection();
-        ProjectileUtility.Fire(
-            projectile,
-            firePoint.position,
-            fireDir,
-            1,
+        ProjectileFactory.Spawn(
+            speed: weaponStat.Speed,
+            lifeTime: weaponStat.LifeTime,
+            firePosition: firePoint.position,
+            direction: fireDir,
+            damage: weaponStat.Damage,
+            prefabName: weaponStat.PrefabName,
             LayerMask.GetMask("Monster")
         );
     }

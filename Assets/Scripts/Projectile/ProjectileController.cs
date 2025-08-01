@@ -15,12 +15,12 @@ public class ProjectileController
     private bool isDestroyed = false;
     private LayerMask targetMask;
 
-    public ProjectileController(ProjectileView view, ProjectileData projectile, Vector2 direction, float damage, LayerMask targetMask, GameObject prefabRef)
+    public ProjectileController(ProjectileView view, float speed, float lifeTime, Vector2 direction, float damage, LayerMask targetMask, GameObject prefabRef)
     {
         this.view = view;
         Direction = direction.normalized;
-        Speed = projectile.Speed;
-        LifeTime = projectile.LifeTime;
+        Speed = speed;
+        LifeTime = lifeTime;
         Damage = damage;
         this.targetMask = targetMask;
         PrefabReference = prefabRef;

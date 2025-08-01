@@ -1,11 +1,5 @@
 public class MonsterData : BaseData
 {
-    public enum MovementType { 
-        LINE,
-        AROUND,
-        JUMP,
-    }
-
     public int HP { get; private set; }
     public int Damage { get; private set; }
     public float MoveSpeed { get; private set; }
@@ -20,8 +14,8 @@ public class MonsterData : BaseData
     public MovementType MoveType { get; private set; }
     public int ProjectileID { get; private set; }
 
-    public MonsterData(int id, string name, int hp, int damage, float moveSpeed, float attackSpeed, float attackRange, int exp, long score, string prefabName, int mapID, int grade, bool isBoss, MovementType moveType, int projectileID)
-        : base(id, name)
+    public MonsterData(int id, string name, string desc, int hp, int damage, float moveSpeed, float attackSpeed, float attackRange, int exp, long score, string prefabName, int mapID, int grade, bool isBoss, MovementType moveType, int projectileID)
+        : base(id, name, desc)
     {
         HP = hp;
         Damage = damage;

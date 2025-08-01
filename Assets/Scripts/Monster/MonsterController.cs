@@ -24,32 +24,11 @@ public class MonsterController : MonoBehaviour, IHittable
     }
 
     public void Initialize(
-        Transform targetTransform,
-        float moveSpeed,
-        float attackRange,
-        int hp,
-        int damage,
-        float attackSpeed,
-        int exp,
-        long score,
-        MonsterData.MovementType moveType,
-        int projectileID,
-        bool isBoss)
+        Transform targetTransform, MonsterData monster)
     {
         target = targetTransform;
 
-        model = new MonsterModel(
-            moveSpeed: moveSpeed,
-            attackRange: attackRange,
-            maxHP: hp,
-            damage: damage,
-            attackSpeed: attackSpeed,
-            exp: exp,
-            score: score,
-            moveType: moveType,
-            projectileID: projectileID,
-            isBoss: isBoss
-            );
+        model = new MonsterModel(monster);
 
         view.Init(this);
         gameObject.SetActive(true);
@@ -89,10 +68,25 @@ public class MonsterController : MonoBehaviour, IHittable
 
         if (model.IsDead)
         {
-            Player.Instance.GainExp(model.EXP);
+            DropExpOrb();
+            GameSessionManager.Instance.AddPendingExp(model.EXP);
             GameSessionManager.Instance.AddScore(model.Score);
             GameSessionManager.Instance.OnEnemyKilled();
             view.Die();
+        }
+    }
+
+    private void DropExpOrb()
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/EXP");
+        if (prefab == null) return;
+
+        GameObject orbObj = Instantiate(prefab, transform.position, Quaternion.identity);
+        var orb = orbObj.GetComponent<ExpOrbComponent>();
+        if (orb != null)
+        {
+            orb.Init(model.EXP, model.Grade);
+            GameSessionManager.Instance.RegisterExpOrb(orb);
         }
     }
 

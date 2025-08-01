@@ -15,8 +15,6 @@ public class PlayerController : MonoBehaviour, IHittable
     [SerializeField] private KeyCode rotateRightKey = KeyCode.RightArrow;
     [SerializeField] private float rotateRepeatDelay = 0.2f;
 
-    private IReadOnlyList<Vector2> directions;
-
     private int nowDir = 0;
     private bool isRotating = false;
     private float rotateTimer = 0f;
@@ -27,6 +25,10 @@ public class PlayerController : MonoBehaviour, IHittable
     public int CurrentExp => model.CurrentExp;
     public int ExpToNextLevel => model.ExpToNextLevel;
     public int CurrentDirectionIndex => nowDir;
+    
+    public int BaseHP{ get; private set; }
+    public int BaseProjectileSpeed { get; private set; }
+    public int BaseProjectileLifeTime { get; private set; }
     public Transform GetTransform() => transform;
 
     private void Awake()
@@ -40,10 +42,11 @@ public class PlayerController : MonoBehaviour, IHittable
         Instance = this;
     }
 
-    public void Init(int maxHP)
+    public void Init(int characterID)
     {
+        CharacterData character = CharacterData.Get(characterID);
         if (model == null)
-            model = new PlayerModel(maxHP);
+            model = new PlayerModel(character.HP);
         else
             model.Reset(maxHP);
 
@@ -53,15 +56,14 @@ public class PlayerController : MonoBehaviour, IHittable
         view.Init(this);
         ResetState();
 
-        directions = MonsterSpawner.Instance?.SpawnDirections;
-        if (directions == null || directions.Count == 0)
-        {
-            Debug.LogError("SpawnDirections가 비어있습니다.");
-            directions = new List<Vector2> { Vector2.left };
-        }
+        GameSessionManager.Instance.UpdateSpawnDirections(character.Direction);
+
+        var directions = GameSessionManager.Instance.SpawnDirections;
 
         view.SetArrowRotation(directions[nowDir], instant: true);
         view.UpdateFacingByDirection(directions[nowDir]);
+
+        UpgradeManager.Instance.ApplyUpgrade(character.StartUpgradeID);
     }
 
     public void ResetState()
@@ -69,6 +71,8 @@ public class PlayerController : MonoBehaviour, IHittable
         ResetAimState();
 
         view.UpdateHPGauge(model.CurrentHP, model.MaxHP);
+
+        var directions = GameSessionManager.Instance.SpawnDirections;
 
         if (directions != null && directions.Count > 0)
         {
@@ -85,7 +89,6 @@ public class PlayerController : MonoBehaviour, IHittable
             view.StopAllCoroutines();
 
         model = null;
-        directions = null;
 
         gameObject.SetActive(false);
     }
@@ -97,6 +100,7 @@ public class PlayerController : MonoBehaviour, IHittable
 
     private void HandleAiming()
     {
+        var directions = GameSessionManager.Instance.SpawnDirections;
         if (isRotating || directions == null || directions.Count == 0)
             return;
 
@@ -172,7 +176,7 @@ public class PlayerController : MonoBehaviour, IHittable
     }
 
     public bool CanFire() => !isRotating;
-    public Vector2 GetAimDirection() => directions[nowDir];
+    public Vector2 GetAimDirection() => GameSessionManager.Instance.SpawnDirections[nowDir];
     public float GetAimAngle()
     {
         Vector2 dir = GetAimDirection();

@@ -65,6 +65,11 @@ public class UIGauge : MonoBehaviour
         progressText.text = ratio.ToPercentFormat(1);
     }
 
+    public void SetProgress(int current, int max)
+    {
+        progressText.text = $"{current}/{max}";
+    }
+
 #if UNITY_EDITOR
     private void OnValidate()
     {

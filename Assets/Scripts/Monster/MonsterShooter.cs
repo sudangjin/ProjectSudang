@@ -50,7 +50,14 @@ public class MonsterShooter : MonoBehaviour, IProjectileShooter
         Vector3 shootOrigin = firePoint != null ? firePoint.position : transform.position;
         Vector2 direction = (player.transform.position - shootOrigin).normalized;
 
-        ProjectileFactory.Spawn(projectileData, shootOrigin, direction, controller.Damage, LayerMask.GetMask("Player"));
+        ProjectileFactory.Spawn(
+            speed: projectileData.Speed,
+            lifeTime: projectileData.LifeTime,
+            firePosition: shootOrigin,
+            direction: direction,
+            damage: controller.Damage,
+            prefabName: projectileData.PrefabName,
+            targetLayerMask: LayerMask.GetMask("Player"));
         controller.PlayAttackMotion();
     }
 }

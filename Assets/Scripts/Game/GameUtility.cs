@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using UnityEngine;
 
 public static class GameUtility
 {
@@ -30,38 +31,92 @@ public static class GameUtility
     #region Data Loader
     public static string GetString(this string[] values, Dictionary<string, int> columnIndex, string key)
     {
+        if (!columnIndex.ContainsKey(key))
+        {
+            Debug.LogWarning($"[GameUtility] Key '{key}' not found in CSV header.");
+            return string.Empty;
+        }
         return values[columnIndex[key]];
     }
 
     public static int GetInt(this string[] values, Dictionary<string, int> columnIndex, string key)
     {
-        return int.Parse(values[columnIndex[key]]);
+        if (!columnIndex.ContainsKey(key))
+        {
+            Debug.LogWarning($"[GameUtility] Key '{key}' not found for int.");
+            return 0;
+        }
+
+        string raw = values[columnIndex[key]].Trim();
+        if (!int.TryParse(raw, out int result))
+        {
+            Debug.LogWarning($"[GameUtility] Failed to parse int for key '{key}', value='{raw}'");
+            return 0;
+        }
+        return result;
     }
 
     public static long GetLong(this string[] values, Dictionary<string, int> columnIndex, string key)
     {
-        return long.Parse(values[columnIndex[key]]);
+        if (!columnIndex.ContainsKey(key))
+        {
+            Debug.LogWarning($"[GameUtility] Key '{key}' not found for long.");
+            return 0;
+        }
+
+        string raw = values[columnIndex[key]].Trim();
+        if (!long.TryParse(raw, out long result))
+        {
+            Debug.LogWarning($"[GameUtility] Failed to parse long for key '{key}', value='{raw}'");
+            return 0;
+        }
+        return result;
     }
 
     public static float GetFloat(this string[] values, Dictionary<string, int> columnIndex, string key)
     {
-        return float.Parse(values[columnIndex[key]]);
+        if (!columnIndex.ContainsKey(key))
+        {
+            Debug.LogWarning($"[GameUtility] Key '{key}' not found for float.");
+            return 0f;
+        }
+
+        string raw = values[columnIndex[key]].Trim();
+        if (!float.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out float result))
+        {
+            Debug.LogWarning($"[GameUtility] Failed to parse float for key '{key}', value='{raw}'");
+            return 0f;
+        }
+        return result;
     }
 
     public static bool GetBool(this string[] values, Dictionary<string, int> columnIndex, string key)
     {
+        if (!columnIndex.ContainsKey(key))
+        {
+            Debug.LogWarning($"[GameUtility] Key '{key}' not found for bool.");
+            return false;
+        }
+
         string raw = values[columnIndex[key]].Trim().ToLower();
         return raw == "1" || raw == "true" || raw == "yes";
     }
 
     public static T GetEnum<T>(this string[] values, Dictionary<string, int> columnIndex, string key) where T : struct
     {
+        if (!columnIndex.ContainsKey(key))
+        {
+            Debug.LogWarning($"[GameUtility] Key '{key}' not found for enum {typeof(T).Name}.");
+            return default;
+        }
+
         string raw = values[columnIndex[key]].Trim();
-        if (System.Enum.TryParse(raw, true, out T result))
-            return result;
-
-        return default;
+        if (!System.Enum.TryParse(raw, true, out T result))
+        {
+            Debug.LogWarning($"[GameUtility] Failed to parse enum {typeof(T).Name} for key '{key}', value='{raw}'");
+            return default;
+        }
+        return result;
     }
-
     #endregion
 }

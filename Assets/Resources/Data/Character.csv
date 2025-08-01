@@ -1,0 +1,2 @@
+﻿ID,Name,StartWeaponID,StartUpgradeID,HP,AutoHeal,TurnSpeed,Direction,Desc
+1,만두머리,1,1,30,0,0.5,12,가장 기본이 되는 캐릭터
