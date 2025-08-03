@@ -7,8 +7,7 @@ public static class ProjectileFactory
         GameObject prefab = Resources.Load<GameObject>($"Prefabs/Projectile/{prefabName}");
         if (prefab == null) return;
 
-        GameObject projectileObj = ObjectPooler.Instance.Create(prefab, SceneHierarchy.Instance.projectilesParent);
-        projectileObj.transform.position = firePosition;
+        GameObject projectileObj = ObjectPooler.Instance.Create(prefab, firePosition, SceneHierarchy.Instance.projectilesParent);
         projectileObj.transform.rotation = Quaternion.identity;
 
         ProjectileView view = projectileObj.GetComponent<ProjectileView>();

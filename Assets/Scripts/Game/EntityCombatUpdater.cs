@@ -9,7 +9,7 @@ public class EntityCombatUpdater : MonoBehaviour
         shooter = GetComponent<IProjectileShooter>();
     }
 
-    private void Update()
+    public void Update()
     {
         shooter?.TryShoot();
     }

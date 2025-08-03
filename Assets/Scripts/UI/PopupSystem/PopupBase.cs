@@ -15,7 +15,7 @@ public abstract class PopupBase : MonoBehaviour
         Initialize();
     }
 
-    public void Close()
+    public virtual void Close()
     {
         closeCallback?.Invoke();
         closeCallback = null;

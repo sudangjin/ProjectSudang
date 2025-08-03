@@ -18,7 +18,7 @@ public class ObjectPooler : MonoBehaviour
         Instance = this;
     }
 
-    public GameObject Create(GameObject prefab, Transform parent)
+    public GameObject Create(GameObject prefab, Vector2 position, Transform parent)
     {
         if (!pools.TryGetValue(prefab, out var stack))
         {
@@ -38,6 +38,7 @@ public class ObjectPooler : MonoBehaviour
         }
 
         obj.transform.SetParent(parent, false);
+        obj.transform.position = position;
         return obj;
     }
 

@@ -38,7 +38,7 @@ public class UIProgressInfo : MonoBehaviour
         }
         else if (payload.State == GameState.GameOver)
         {
-            progressText.text = "Game Over!";
+            progressText.text = "게임 종료";
             if (timerRoutine != null) StopCoroutine(timerRoutine);
         }
     }

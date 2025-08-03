@@ -64,6 +64,9 @@ public class GameSessionManager : MonoBehaviour
 
         while (true)
         {
+            if (State == GameState.GameOver)
+                yield break;
+
             wave++;
             killedEnemies = 0;
             totalEnemies = Config.baseEnemyCount + (wave - 1) * Config.enemyIncreasePerWave;
@@ -82,8 +85,11 @@ public class GameSessionManager : MonoBehaviour
             while (killedEnemies < totalEnemies && State != GameState.GameOver)
                 yield return null;
 
-            ApplyPendingExp();
-            CollectAllExp();
+            if (State != GameState.GameOver)
+            {
+                yield return StartCoroutine(CollectAllExp());
+                yield return StartCoroutine(ApplyPendingExpRoutine());
+            }
         }
     }
 
@@ -105,12 +111,34 @@ public class GameSessionManager : MonoBehaviour
         pendingExp += value;
     }
 
-    private void ApplyPendingExp()
+    private IEnumerator ApplyPendingExpRoutine()
     {
-        if (pendingExp > 0)
+        if (pendingExp <= 0) yield break;
+
+        int expToProcess = pendingExp;
+        pendingExp = 0;
+
+        while (expToProcess > 0)
         {
-            Player.Instance.GainExp(pendingExp);
-            pendingExp = 0;
+            int prevLevel = Player.Instance.Level;
+            bool leveledUp = Player.Instance.GainExp(expToProcess);
+
+            if (leveledUp && Player.Instance.Level > prevLevel)
+            {
+                bool popupClosed = false;
+                PopupManager.Instance.Open<Popup_SelectCard>().Init(() => {
+                    popupClosed = true;
+                });
+
+                yield return new WaitUntil(() => popupClosed);
+                expToProcess = Player.Instance.CurrentExp >= Player.Instance.ExpToNextLevel
+                    ? Player.Instance.CurrentExp - Player.Instance.ExpToNextLevel
+                    : 0;
+            }
+            else
+            {
+                break;
+            }
         }
     }
 
@@ -119,14 +147,31 @@ public class GameSessionManager : MonoBehaviour
         expOrbs.Add(orb);
     }
 
-    private void CollectAllExp()
+    private IEnumerator CollectAllExp()
     {
+        if (expOrbs.Count == 0) yield break;
+
+        int remaining = expOrbs.Count;
+        bool completed = false;
+
         foreach (var orb in expOrbs)
         {
             if (orb != null)
-                orb.Collect(playerController.transform);
+            {
+                orb.Collect(playerController.transform, () => {
+                    remaining--;
+                    if (remaining <= 0) completed = true;
+
+                    GameObject prefab = PrefabPreLoader.Instance.GetPrefab(PrefabType.EXP_ORB);
+                    if (prefab == null) return;
+
+                    ObjectPooler.Instance.Release(prefab, orb.gameObject, SceneHierarchy.Instance.expParent);
+                });
+            }
         }
         expOrbs.Clear();
+
+        yield return new WaitUntil(() => completed);
     }
 
     public void UpdateSpawnDirections(int count)

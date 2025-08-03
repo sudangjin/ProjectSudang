@@ -7,8 +7,11 @@ public class UpgradeData : BaseData
     public IdValueCollection RequireUpgrades { get; private set; }
     public int MaxLevel { get; private set; }
     public float Value { get; private set; }
+    public float AddScore { get; private set; }
+    public bool IsNegative { get; private set; }
 
-    public UpgradeData(int id, string name, string desc, UpgradeType type, int requireWeaponID, string requireUpgradeRaw, int maxLevel, float value)
+
+    public UpgradeData(int id, string name, string desc, UpgradeType type, int requireWeaponID, string requireUpgradeRaw, int maxLevel, float value, float addScore, bool isNegative)
         : base(id, name, desc)
     {
         Type = type;
@@ -17,6 +20,8 @@ public class UpgradeData : BaseData
 
         MaxLevel = maxLevel;
         Value = value;
+        AddScore = addScore;
+        IsNegative = isNegative;
     }
 
     public static UpgradeData Get(int dataID)

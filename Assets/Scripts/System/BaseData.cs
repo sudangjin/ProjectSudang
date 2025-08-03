@@ -8,6 +8,6 @@ public abstract class BaseData
     {
         ID = id;
         Name = name;
-        Desc = desc;
+        Desc = desc.Replace("<br>", "\n");
     }
 }

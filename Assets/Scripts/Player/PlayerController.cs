@@ -9,8 +9,6 @@ public class PlayerController : MonoBehaviour, IHittable
     private PlayerModel model;
     private PlayerView view;
 
-    [SerializeField] private int maxHP = 100;
-
     [SerializeField] private KeyCode rotateLeftKey = KeyCode.LeftArrow;
     [SerializeField] private KeyCode rotateRightKey = KeyCode.RightArrow;
     [SerializeField] private float rotateRepeatDelay = 0.2f;
@@ -25,10 +23,7 @@ public class PlayerController : MonoBehaviour, IHittable
     public int CurrentExp => model.CurrentExp;
     public int ExpToNextLevel => model.ExpToNextLevel;
     public int CurrentDirectionIndex => nowDir;
-    
-    public int BaseHP{ get; private set; }
-    public int BaseProjectileSpeed { get; private set; }
-    public int BaseProjectileLifeTime { get; private set; }
+
     public Transform GetTransform() => transform;
 
     private void Awake()
@@ -38,7 +33,6 @@ public class PlayerController : MonoBehaviour, IHittable
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
     }
 
@@ -48,7 +42,7 @@ public class PlayerController : MonoBehaviour, IHittable
         if (model == null)
             model = new PlayerModel(character.HP);
         else
-            model.Reset(maxHP);
+            model.Reset(character.HP);
 
         if (view == null)
             view = GetComponent<PlayerView>();
@@ -57,9 +51,7 @@ public class PlayerController : MonoBehaviour, IHittable
         ResetState();
 
         GameSessionManager.Instance.UpdateSpawnDirections(character.Direction);
-
         var directions = GameSessionManager.Instance.SpawnDirections;
-
         view.SetArrowRotation(directions[nowDir], instant: true);
         view.UpdateFacingByDirection(directions[nowDir]);
 
@@ -69,11 +61,9 @@ public class PlayerController : MonoBehaviour, IHittable
     public void ResetState()
     {
         ResetAimState();
-
         view.UpdateHPGauge(model.CurrentHP, model.MaxHP);
 
         var directions = GameSessionManager.Instance.SpawnDirections;
-
         if (directions != null && directions.Count > 0)
         {
             view.SetArrowRotation(directions[nowDir], instant: true);
@@ -84,16 +74,13 @@ public class PlayerController : MonoBehaviour, IHittable
     public void Dispose()
     {
         ResetAimState();
-
         if (view != null)
             view.StopAllCoroutines();
-
         model = null;
-
         gameObject.SetActive(false);
     }
 
-    private void Update()
+    public void Update()
     {
         HandleAiming();
     }
@@ -126,7 +113,6 @@ public class PlayerController : MonoBehaviour, IHittable
         {
             isHoldingRight = true;
             rotateTimer += Time.deltaTime;
-
             if (rotateTimer >= rotateRepeatDelay)
             {
                 rotateTimer = 0f;
@@ -137,7 +123,6 @@ public class PlayerController : MonoBehaviour, IHittable
         {
             isHoldingLeft = true;
             rotateTimer += Time.deltaTime;
-
             if (rotateTimer >= rotateRepeatDelay)
             {
                 rotateTimer = 0f;
@@ -157,11 +142,9 @@ public class PlayerController : MonoBehaviour, IHittable
         if (prev != nowDir)
         {
             isRotating = true;
-
             view.SetArrowRotation(directions[nowDir], instant: false, onComplete: () => {
                 isRotating = false;
             });
-
             view.UpdateFacingByDirection(directions[nowDir]);
         }
     }
@@ -183,7 +166,7 @@ public class PlayerController : MonoBehaviour, IHittable
         return Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
     }
 
-    public void GainExp(int amount)
+    public bool GainExp(int amount)
     {
         int prevLevel = model.Level;
         bool leveledUp = model.AddExp(amount);
@@ -195,6 +178,7 @@ public class PlayerController : MonoBehaviour, IHittable
         }
 
         GameEvent.Publish(EventKeys.PlayerExpChanged, (model.CurrentExp, model.ExpToNextLevel));
+        return leveledUp;
     }
 
     public void TakeDamage(int damage)

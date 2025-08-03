@@ -40,7 +40,7 @@ public class MonsterController : MonoBehaviour, IHittable
         if (rb != null) rb.simulated = true;
     }
 
-    private void Update()
+    public void Update()
     {
         if (target == null || model.IsDead) return;
 
@@ -78,10 +78,10 @@ public class MonsterController : MonoBehaviour, IHittable
 
     private void DropExpOrb()
     {
-        GameObject prefab = Resources.Load<GameObject>("Prefabs/EXP");
+        GameObject prefab = PrefabPreLoader.Instance.GetPrefab(PrefabType.EXP_ORB);
         if (prefab == null) return;
 
-        GameObject orbObj = Instantiate(prefab, transform.position, Quaternion.identity);
+        GameObject orbObj = ObjectPooler.Instance.Create(prefab, transform.position, SceneHierarchy.Instance.expParent);
         var orb = orbObj.GetComponent<ExpOrbComponent>();
         if (orb != null)
         {

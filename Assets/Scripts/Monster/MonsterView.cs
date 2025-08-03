@@ -33,7 +33,7 @@ public class MonsterView : MonoBehaviour
             playerTransform = Player.Instance.transform;
     }
 
-    private void Update()
+    public void Update()
     {
         if (Camera.main != null)
             UpdateHPBarFacing(Camera.main.transform);

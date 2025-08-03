@@ -210,7 +210,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!114 &4056886519930203507
 MonoBehaviour:
@@ -406,12 +406,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firePoint: {fileID: 2485249517754393888}
-  projectilePrefab: {fileID: 705189247198809779, guid: 303b3b45442371e44aca115325be5253,
-    type: 3}
-  projectileSpeed: 3
-  projectileLifeTime: 3
-  projectileDamage: 1
-  fireCooldown: 1.5
 --- !u!95 &3660077932872440444
 Animator:
   serializedVersion: 5
@@ -506,7 +500,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 8
   m_Sprite: {fileID: -3286189400204805870, guid: bacb39275657a5c41b462455d80cd045,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

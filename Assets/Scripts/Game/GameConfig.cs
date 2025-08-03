@@ -25,4 +25,7 @@ public class GameConfig : ScriptableObject
     [Header("Experience Orbs")]
     public int expOrbMaxCount = 100;
     public List<Color> expColors = new List<Color>();
+
+    [Header("Upgrade")]
+    public List<float> hideCardUpgradeCountRatio;
 }

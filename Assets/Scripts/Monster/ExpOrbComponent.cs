@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using DG.Tweening;
+using System;
 
 public class ExpOrbComponent : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class ExpOrbComponent : MonoBehaviour
     private bool isCollecting = false;
 
     private Tweener colorTween;
+
+    private Action finishCallback = null;
 
     private void Awake()
     {
@@ -27,11 +30,12 @@ public class ExpOrbComponent : MonoBehaviour
         StartShine();
     }
 
-    public void Collect(Transform player)
+    public void Collect(Transform player, Action onFinish)
     {
         if (isCollecting) return;
         target = player;
         isCollecting = true;
+        finishCallback = onFinish;
 
         if (colorTween != null && colorTween.IsActive())
             colorTween.Kill();
@@ -55,7 +59,7 @@ public class ExpOrbComponent : MonoBehaviour
     private IEnumerator MoveToPlayer()
     {
         Vector3 start = transform.position;
-        Vector3 randomOffset = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0f);
+        Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), 0f);
 
         float t = 0f;
         while (t < 1f)
@@ -67,6 +71,6 @@ public class ExpOrbComponent : MonoBehaviour
             yield return null;
         }
 
-        Destroy(gameObject);
+        finishCallback?.Invoke();
     }
 }

@@ -13,11 +13,11 @@ public class IdValueCollection
     {
         if (string.IsNullOrWhiteSpace(raw)) return;
 
-        string[] groups = raw.Split(new string[] { "],[" }, System.StringSplitOptions.RemoveEmptyEntries);
+        string[] groups = raw.Split(new string[] { "]:[" }, System.StringSplitOptions.RemoveEmptyEntries);
         foreach (var group in groups)
         {
             string cleaned = group.Replace("[", "").Replace("]", "").Trim();
-            string[] values = cleaned.Split(',');
+            string[] values = cleaned.Split('-');
 
             if (values.Length == 2 &&
                 int.TryParse(values[0], out int id) &&

@@ -29,8 +29,7 @@ public class MonsterSpawner : MonoBehaviour
         GameObject prefab = Resources.Load<GameObject>($"Prefabs/Monster/{monster.PrefabName}");
         if (prefab == null) return;
 
-        GameObject monsterObj = ObjectPooler.Instance.Create(prefab, SceneHierarchy.Instance.monstersParent);
-        monsterObj.transform.position = spawnPos;
+        GameObject monsterObj = ObjectPooler.Instance.Create(prefab, spawnPos, SceneHierarchy.Instance.monstersParent);
 
         var controller = monsterObj.GetComponent<MonsterController>();
         controller.PrefabReference = prefab;

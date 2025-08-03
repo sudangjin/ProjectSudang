@@ -25,7 +25,7 @@ public class ProjectileUpdater : MonoBehaviour
         projectiles.Remove(projectile);
     }
 
-    void Update()
+    public void Update()
     {
         for (int i = projectiles.Count - 1; i >= 0; i--)
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Collections.ObjectModel;
 
 public class DataManager
 {
@@ -98,7 +99,9 @@ public class DataManager
                 requireWeaponID: values.GetInt(columns, "RequireWeaponID"),
                 requireUpgradeRaw: values.GetString(columns, "RequireUpgrade"),
                 maxLevel: values.GetInt(columns, "MaxLevel"),
-                value: values.GetFloat(columns, "Value")
+                value: values.GetFloat(columns, "Value"),
+                addScore: values.GetFloat(columns, "AddScore"),
+                isNegative: values.GetBool(columns, "IsNegative")
             ),
             getKey: data => data.ID,
             targetDict: upgradeDataDic,
