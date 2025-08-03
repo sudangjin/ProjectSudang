@@ -18,6 +18,9 @@ public class GameConfig : ScriptableObject
     [Header("Monster")]
     public float spawnInterval = 2f;
     public float spawnRadius = 8f;
+    public float monsterHPPerWave = 0.2f;
+    public float monsterDamagePerWave = 0.2f;
+    public float monsterScorePerWave = 0.5f;
 
     [Header("Monster Spawn Ratio")]
     public List<MonsterSpawnEntry> monsterSpawnRatios = new List<MonsterSpawnEntry>();
@@ -28,4 +31,9 @@ public class GameConfig : ScriptableObject
 
     [Header("Upgrade")]
     public List<float> hideCardUpgradeCountRatio;
+
+    [Header("DamageText")]
+    public Color monsterHit;
+    public Color playerHit;
+    public Color playerHeal;
 }

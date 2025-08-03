@@ -8,6 +8,7 @@ public class SceneHierarchy : MonoBehaviour
     public Transform monstersParent;
     public Transform projectilesParent;
     public Transform expParent;
+    public Transform damageTextParent;
 
     private void Awake()
     {

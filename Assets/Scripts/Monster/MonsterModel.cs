@@ -17,17 +17,24 @@ public class MonsterModel
     public bool IsBoss { get; private set; }
     public bool IsDead => CurrentHP <= 0;
 
-    public MonsterModel(MonsterData monster)
+    public MonsterModel(MonsterData monster, UpgradeStat upgradeStat)
     {
+        var nowWave = GameSessionManager.Instance.Wave;
+        var config = GameSessionManager.Instance.Config;
+
+        var monsterHP = monster.HP * (1f + ((nowWave - 1) * config.monsterHPPerWave));
+        var monsterDamage = monster.Damage * (1f + ((nowWave - 1) * config.monsterDamagePerWave));
+        var monsterScore = monster.Score * (1f + ((nowWave - 1) * config.monsterScorePerWave));
+
         ID = monster.ID;
-        MoveSpeed = monster.MoveSpeed;
-        AttackRange = monster.AttackRange;
-        MaxHP = monster.HP;
-        CurrentHP = monster.HP;
-        Damage = monster.Damage;
-        AttackSpeed = monster.AttackSpeed;
+        MoveSpeed = monster.MoveSpeed * upgradeStat.MultipleEnemyMovementSpeed;
+        AttackRange = monster.AttackRange * upgradeStat.MultipleEnemyAttackRange;
+        MaxHP = (int)(monsterHP * upgradeStat.MultipleEnemyHP);
+        CurrentHP = MaxHP;
+        Damage = (int)(monsterDamage * upgradeStat.MultipleEnemyDamage);
+        AttackSpeed = monster.AttackSpeed * upgradeStat.MultipleEnemyAttackSpeed;
         EXP = monster.EXP;
-        Score = monster.Score;
+        Score = (long)(monsterScore * UpgradeManager.Instance.AddScore);
         MoveType = monster.MoveType;
         ProjectileID = monster.ProjectileID;
         Grade = monster.Grade;

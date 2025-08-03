@@ -7,10 +7,11 @@ public class PlayerView : MonoBehaviour
 {
     [SerializeField] private Transform unit;
     [SerializeField] private Transform dirStick;
-    [SerializeField] private float rotateDuration = 0.15f;
 
     [SerializeField] private UIGauge hpGauge;
     [SerializeField] private SpriteRenderer spriteRenderer;
+
+    public PlayerController Controller { get; private set; }
 
     private bool currentFacingLeft = false;
     private Coroutine flashCoroutine;
@@ -24,12 +25,13 @@ public class PlayerView : MonoBehaviour
 
     public void Init(PlayerController controller)
     {
-        if (controller == null) return;
+        Controller = controller;
+        if (Controller == null) return;
 
         if (hpGauge != null)
         {
-            int max = controller.GetMaxHP();
-            int current = controller.GetCurrentHP();
+            int max = Controller.GetMaxHP();
+            int current = Controller.GetCurrentHP();
             hpGauge.Init();
             hpGauge.UpdateValue(current, max);
             hpGauge.SetProgress(current, max);
@@ -67,8 +69,9 @@ public class PlayerView : MonoBehaviour
         }
         else
         {
+            var upgradeStat = UpgradeManager.Instance.AddedUpdateStat;
             dirStick
-                .DORotate(new Vector3(0f, 0f, targetZ), rotateDuration)
+                .DORotate(new Vector3(0f, 0f, targetZ), Controller.Character.TurnSpeed * upgradeStat.MultipleTurnSpeed)
                 .SetEase(Ease.OutQuad)
                 .OnComplete(() => onComplete?.Invoke());
         }
@@ -115,5 +118,18 @@ public class PlayerView : MonoBehaviour
     public void PlayLevelUpEffect()
     {
         Debug.Log("Level Up!");
+    }
+
+    public void ShowDamage(int damage, bool isHeal)
+    {
+        var prefab = PrefabPreLoader.Instance.GetPrefab(PrefabType.DAMAGE_TEXT);
+        if (prefab == null) return;
+
+        Vector3 spawnPos = transform.position + new Vector3(Random.Range(-0.3f, 0.3f), 0.8f, 0);
+
+        GameObject obj = ObjectPooler.Instance.Create(prefab, spawnPos, SceneHierarchy.Instance.damageTextParent);
+        var dmg = obj.GetComponent<DamageText>();
+        var color = isHeal ? GameSessionManager.Instance.Config.playerHeal : GameSessionManager.Instance.Config.playerHit;
+        dmg.Show(damage, color, spawnPos);
     }
 }

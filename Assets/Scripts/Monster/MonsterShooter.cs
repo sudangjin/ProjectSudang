@@ -15,28 +15,31 @@ public class MonsterShooter : MonoBehaviour, IProjectileShooter
 
     public void TryShoot()
     {
+        var updateStat = UpgradeManager.Instance.AddedUpdateStat;
+        if (updateStat == null) return;
+
         if (controller == null || controller.IsDead)
             return;
 
         fireCooldownTimer += Time.deltaTime;
 
-        if (fireCooldownTimer < controller.AttackSpeed)
+        if (fireCooldownTimer < controller.AttackSpeed * updateStat.MultipleEnemyAttackSpeed)
             return;
 
-        if (!IsTargetInAttackRange())
+        if (!IsTargetInAttackRange(updateStat.MultipleEnemyAttackRange))
             return;
 
         FireAtTarget();
         fireCooldownTimer = 0f;
     }
 
-    private bool IsTargetInAttackRange()
+    private bool IsTargetInAttackRange(float multiple)
     {
         var player = Player.Instance;
         if (player == null) return false;
 
         float distance = Vector3.Distance(transform.position, player.transform.position);
-        return distance <= controller.AttackRange;
+        return distance <= controller.AttackRange * multiple;
     }
 
     private void FireAtTarget()
@@ -46,6 +49,9 @@ public class MonsterShooter : MonoBehaviour, IProjectileShooter
 
         var projectileData = ProjectileData.Get(controller.ProjectileID);
         if (projectileData == null) return;
+
+        var updateStat = UpgradeManager.Instance.AddedUpdateStat;
+        if (updateStat == null) return;
 
         Vector3 shootOrigin = firePoint != null ? firePoint.position : transform.position;
         Vector2 direction = (player.transform.position - shootOrigin).normalized;

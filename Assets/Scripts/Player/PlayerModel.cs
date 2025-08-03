@@ -29,25 +29,38 @@ public class PlayerModel
         CurrentHP = Mathf.Max(CurrentHP - damage, 0);
     }
 
-    public void Heal(int amount)
+    public int Heal(int amount)
     {
-        CurrentHP = Mathf.Min(CurrentHP + amount, MaxHP);
+        var healAmount = Mathf.Min(amount, MaxHP - CurrentHP);
+        CurrentHP += healAmount;
+
+        return healAmount;
     }
 
-    public bool AddExp(int amount)
+    public void AddHP(int value)
     {
-        if (amount <= 0) return false;
+        var reduceHP = MaxHP - CurrentHP;
 
-        CurrentExp += amount;
-        bool leveledUp = false;
+        MaxHP = value;
+        CurrentHP = value - reduceHP;
+    }
 
-        while (CurrentExp >= ExpToNextLevel)
+    public int AddExp(int amount)
+    {
+        if (amount <= 0) return 0;
+
+        int need = ExpToNextLevel - CurrentExp;
+        int toAdd = Mathf.Min(amount, need);
+
+        CurrentExp += toAdd;
+        amount -= toAdd;
+
+        if (CurrentExp >= ExpToNextLevel)
         {
-            CurrentExp -= ExpToNextLevel;
+            CurrentExp = 0;
             Level++;
-            leveledUp = true;
         }
 
-        return leveledUp;
+        return amount;
     }
 }

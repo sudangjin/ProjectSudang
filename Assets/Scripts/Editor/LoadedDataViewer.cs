@@ -42,6 +42,7 @@ public class LoadedDataViewer : EditorWindow
 
         scroll = EditorGUILayout.BeginScrollView(scroll);
 
+        // Monsters
         showMonsters = EditorGUILayout.Foldout(showMonsters, $"Monsters ({dm.GetAllMonsters().Count()})", true);
         if (showMonsters)
         {
@@ -64,6 +65,7 @@ public class LoadedDataViewer : EditorWindow
 
         EditorGUILayout.Space();
 
+        // Projectiles
         showProjectiles = EditorGUILayout.Foldout(showProjectiles, $"Projectiles ({dm.GetAllProjectiles().Count()})", true);
         if (showProjectiles)
         {
@@ -84,13 +86,27 @@ public class LoadedDataViewer : EditorWindow
 
         EditorGUILayout.Space();
 
+        // Upgrades
         showUpgrades = EditorGUILayout.Foldout(showUpgrades, $"Upgrades ({dm.GetAllUpgrades().Count()})", true);
         if (showUpgrades)
         {
             foreach (var u in dm.GetAllUpgrades())
             {
                 if (!upgradeFoldouts.ContainsKey(u.ID)) upgradeFoldouts[u.ID] = false;
-                upgradeFoldouts[u.ID] = EditorGUILayout.Foldout(upgradeFoldouts[u.ID], $"{u.ID} | {u.Name}");
+
+                EditorGUILayout.BeginHorizontal();
+
+                if (GUILayout.Button($"{u.ID} | {u.Name}", GUILayout.ExpandWidth(true)))
+                {
+                    UpgradeManager.Instance.ApplyUpgrade(u.ID);
+                    PopupManager.Instance.ShowLabel($"Upgrade {u.Name} applied!", Color.green);
+                }
+
+                Rect foldoutRect = GUILayoutUtility.GetRect(15, EditorGUIUtility.singleLineHeight);
+                upgradeFoldouts[u.ID] = EditorGUI.Foldout(foldoutRect, upgradeFoldouts[u.ID], "");
+
+                EditorGUILayout.EndHorizontal();
+
                 if (upgradeFoldouts[u.ID])
                 {
                     EditorGUI.indentLevel++;
@@ -105,6 +121,7 @@ public class LoadedDataViewer : EditorWindow
 
         EditorGUILayout.Space();
 
+        // Weapons
         showWeapons = EditorGUILayout.Foldout(showWeapons, $"Weapons ({dm.GetAllWeapons().Count()})", true);
         if (showWeapons)
         {
@@ -125,6 +142,7 @@ public class LoadedDataViewer : EditorWindow
 
         EditorGUILayout.Space();
 
+        // Characters
         showCharacters = EditorGUILayout.Foldout(showCharacters, $"Characters ({dm.GetAllCharacters().Count()})", true);
         if (showCharacters)
         {

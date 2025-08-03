@@ -38,3 +38,6 @@ MonoBehaviour:
   - 50
   - 20
   - 5
+  monsterHit: {r: 1, g: 1, b: 1, a: 1}
+  playerHit: {r: 1, g: 0.41823888, b: 0.41823888, a: 1}
+  playerHeal: {r: 0.34804192, g: 0.836478, b: 0.26041287, a: 1}

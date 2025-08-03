@@ -27,8 +27,8 @@ public class Popup_SelectCard : PopupBase
         rerollCountText.text = UpgradeManager.Instance.RerollDice.ToString();
         hideRerollCountText.text = hideRerollDice.ToString();
 
-        rerollButtons.SetActive(true);
-        closeButton.SetActive(false);
+        ShowRerollButton(false);
+        ShowCloseButton(false);
     }
 
     private void SetCard(bool isHideMode)
@@ -73,6 +73,7 @@ public class Popup_SelectCard : PopupBase
             cell.EnableInteraction();
 
         interactionEnabled = true;
+        ShowRerollButton(true);
     }
 
     private void DisableCardInteractions()
@@ -85,7 +86,7 @@ public class Popup_SelectCard : PopupBase
 
     private void ShowCloseButton(bool isShow)
     {
-        closeButton.SetActive(true);
+        closeButton.SetActive(isShow);
     }
 
     private void ShowRerollButton(bool isShow)

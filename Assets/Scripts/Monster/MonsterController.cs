@@ -1,3 +1,4 @@
+using System.Data;
 using UnityEngine;
 
 [RequireComponent(typeof(MonsterView))]
@@ -28,7 +29,8 @@ public class MonsterController : MonoBehaviour, IHittable
     {
         target = targetTransform;
 
-        model = new MonsterModel(monster);
+        var upgradeStat = UpgradeManager.Instance.AddedUpdateStat;
+        model = new MonsterModel(monster, upgradeStat);
 
         view.Init(this);
         gameObject.SetActive(true);
@@ -64,14 +66,18 @@ public class MonsterController : MonoBehaviour, IHittable
 
         model.TakeDamage(damage);
         view.PlayHitEffect();
+        view.ShowDamage(damage);
         view.UpdateHPGauge(model.CurrentHP, model.MaxHP);
 
+        var upgradeStat = UpgradeManager.Instance.AddedUpdateStat;
         if (model.IsDead)
         {
             DropExpOrb();
             GameSessionManager.Instance.AddPendingExp(model.EXP);
             GameSessionManager.Instance.AddScore(model.Score);
+            Player.Instance.Heal(upgradeStat.AddHealOnKill);
             GameSessionManager.Instance.OnEnemyKilled();
+
             view.Die();
         }
     }

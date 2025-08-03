@@ -6,6 +6,7 @@ public class PopupManager : MonoBehaviour
     public static PopupManager Instance { get; private set; }
 
     [SerializeField] private Transform popupRoot;
+    [SerializeField] private NoticeLabel noticeLebel;
 
     private Stack<PopupBase> activePopupStack = new();
     private Queue<string> popupQueue = new();
@@ -53,6 +54,22 @@ public class PopupManager : MonoBehaviour
         popup.OnOpen(() => ClosePopup(popupName, popup));
 
         return popup;
+    }
+
+    public void ShowLabel(string text)
+    {
+        noticeLebel.ShowLabel(text, Color.white);
+    }
+
+    public void ShowLabel(string text, Color color)
+    {
+        if (noticeLebel == null)
+        {
+            Debug.LogError("NoticeLabel 컴포넌트가 할당되지 않았습니다.");
+            return;
+        }
+
+        noticeLebel.ShowLabel(text, color);
     }
 
     private void ClosePopup(string popupName, PopupBase popup)

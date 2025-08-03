@@ -14,7 +14,7 @@ public class GameSessionManager : MonoBehaviour
 
     public long Score { get; private set; }
 
-    private int wave = 0;
+    public int Wave { get; private set; }
     private int killedEnemies = 0;
     private int totalEnemies = 0;
     private int pendingExp = 0;
@@ -39,7 +39,7 @@ public class GameSessionManager : MonoBehaviour
     public void Init(int characterID)
     {
         Score = 0;
-        wave = 0;
+        Wave = 0;
         pendingExp = 0;
         State = GameState.WaitingWave;
         expOrbs.Clear();
@@ -48,9 +48,10 @@ public class GameSessionManager : MonoBehaviour
 
         if (stageController != null && playerController != null)
         {
-            playerController.Init(characterID);
             var characterData = CharacterData.Get(characterID);
-            UpgradeManager.Instance.InitWeaponStat(characterData.StartWeaponID);
+            UpgradeManager.Instance.Init(WeaponData.Get(characterData.StartWeaponID));
+
+            playerController.Init(characterID);
             stageController.StartStage(playerController.transform);
         }
 
@@ -67,9 +68,13 @@ public class GameSessionManager : MonoBehaviour
             if (State == GameState.GameOver)
                 yield break;
 
-            wave++;
+            Wave++;
             killedEnemies = 0;
-            totalEnemies = Config.baseEnemyCount + (wave - 1) * Config.enemyIncreasePerWave;
+
+            var upgradeStat = UpgradeManager.Instance.AddedUpdateStat;
+
+            totalEnemies = Config.baseEnemyCount + (Wave - 1) * (Config.enemyIncreasePerWave + (upgradeStat.AddEnemyCountByWave * (Wave - upgradeStat.StartAddEnemyCountByWave)));
+            totalEnemies = (int)(totalEnemies * upgradeStat.MultipleEnemyCount);
 
             State = GameState.WaitingWave;
             float targetTime = Time.time + Config.waitTime;
@@ -80,7 +85,7 @@ public class GameSessionManager : MonoBehaviour
             State = GameState.InWave;
             GameEvent.Publish(EventKeys.GameStateChanged, new GameStatePayload(GameState.InWave, current: killedEnemies, max: totalEnemies));
 
-            stageController.StartWave(wave, totalEnemies, Config.spawnInterval, mapID);
+            stageController.StartWave(Wave, totalEnemies, Config.spawnInterval * upgradeStat.MultipleAppearEnemyTime, mapID);
 
             while (killedEnemies < totalEnemies && State != GameState.GameOver)
                 yield return null;
@@ -102,7 +107,7 @@ public class GameSessionManager : MonoBehaviour
 
     public void AddScore(long amount)
     {
-        Score += (amount * wave);
+        Score += (amount * Wave);
         GameEvent.Publish(EventKeys.GameScoreChanged, Score);
     }
 
@@ -121,19 +126,13 @@ public class GameSessionManager : MonoBehaviour
         while (expToProcess > 0)
         {
             int prevLevel = Player.Instance.Level;
-            bool leveledUp = Player.Instance.GainExp(expToProcess);
+            expToProcess = Player.Instance.GainExp(expToProcess);
 
-            if (leveledUp && Player.Instance.Level > prevLevel)
+            if (Player.Instance.Level > prevLevel)
             {
                 bool popupClosed = false;
-                PopupManager.Instance.Open<Popup_SelectCard>().Init(() => {
-                    popupClosed = true;
-                });
-
+                PopupManager.Instance.Open<Popup_SelectCard>().Init(() => popupClosed = true);
                 yield return new WaitUntil(() => popupClosed);
-                expToProcess = Player.Instance.CurrentExp >= Player.Instance.ExpToNextLevel
-                    ? Player.Instance.CurrentExp - Player.Instance.ExpToNextLevel
-                    : 0;
             }
             else
             {

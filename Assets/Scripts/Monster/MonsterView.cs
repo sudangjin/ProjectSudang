@@ -115,4 +115,16 @@ public class MonsterView : MonoBehaviour
         bool isRightSide = transform.position.x > playerPosition.x;
         spriteRenderer.flipX = isRightSide;
     }
+
+    public void ShowDamage(int damage)
+    {
+        var prefab = PrefabPreLoader.Instance.GetPrefab(PrefabType.DAMAGE_TEXT);
+        if (prefab == null) return;
+
+        Vector3 spawnPos = transform.position + new Vector3(Random.Range(-0.3f, 0.3f), 0.8f, 0);
+        
+        GameObject obj = ObjectPooler.Instance.Create(prefab, spawnPos, SceneHierarchy.Instance.damageTextParent);
+        var dmg = obj.GetComponent<DamageText>();
+        dmg.Show(damage, GameSessionManager.Instance.Config.monsterHit, spawnPos);
+    }
 }

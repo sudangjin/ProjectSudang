@@ -20,6 +20,7 @@ public class PrefabPreLoader : MonoBehaviour
 
         Dictionary<PrefabType, GameObject> prefabDict = new Dictionary<PrefabType, GameObject>();
         prefabDict.Add(PrefabType.EXP_ORB, Resources.Load<GameObject>("Prefabs/EXP"));
+        prefabDict.Add(PrefabType.DAMAGE_TEXT, Resources.Load<GameObject>("Prefabs/DamageText"));
         preparePrefabMap = prefabDict;
     }
 
