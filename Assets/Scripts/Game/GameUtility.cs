@@ -28,6 +28,12 @@ public static class GameUtility
         return string.Format(CultureInfo.InvariantCulture, "{0}%", value.ToString(format, CultureInfo.InvariantCulture));
     }
 
+    public static string SFormat(this string format, params object[] args)
+    {
+        if (string.IsNullOrEmpty(format)) return format;
+        return string.Format(CultureInfo.InvariantCulture, format, args);
+    }
+
     #region Data Loader
     public static string GetString(this string[] values, Dictionary<string, int> columnIndex, string key)
     {

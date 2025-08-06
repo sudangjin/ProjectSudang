@@ -33,17 +33,21 @@ public class PlayerShooter : MonoBehaviour, IProjectileShooter
         var weapon = UpgradeManager.Instance.WeaponData;
 
         var burstCount = updateStat.AddShotSameDir + 1;
+
+        var speed = weapon.Speed * updateStat.MultplePlayerProjectileSpeed;
+        var damage = Mathf.Max((int)((weapon.Damage + updateStat.AddPlayerDamage) * updateStat.PaneltyPlayerDamage), 1);
+
         for (int shot = 0; shot < burstCount; shot++)
         {
             if (updateStat.AddShotBehindDir)
             {
                 Vector2 fireDir = Player.Instance.GetAimDirection();
                 ProjectileFactory.Spawn(
-                    speed: weapon.Speed * updateStat.MultplePlayerProjectileSpeed,
+                    speed: speed,
                     lifeTime: weapon.LifeTime,
                     firePosition: firePoint.position,
                     direction: -fireDir,
-                    damage: weapon.Damage + updateStat.AddPlayerDamage,
+                    damage: damage,
                     prefabName: weapon.PrefabName,
                     LayerMask.GetMask("Monster")
                 );
@@ -67,11 +71,11 @@ public class PlayerShooter : MonoBehaviour, IProjectileShooter
                 foreach (var dir in pickedList)
                 {
                     ProjectileFactory.Spawn(
-                        speed: weapon.Speed * updateStat.MultplePlayerProjectileSpeed,
+                        speed: speed,
                         lifeTime: weapon.LifeTime,
                         firePosition: firePoint.position,
                         direction: dir,
-                        damage: weapon.Damage + updateStat.AddPlayerDamage,
+                        damage: damage,
                         prefabName: weapon.PrefabName,
                         LayerMask.GetMask("Monster")
                     );
@@ -81,15 +85,17 @@ public class PlayerShooter : MonoBehaviour, IProjectileShooter
             {
                 Vector2 fireDir = Player.Instance.GetAimDirection();
                 ProjectileFactory.Spawn(
-                    speed: weapon.Speed * updateStat.MultplePlayerProjectileSpeed,
+                    speed: speed,
                     lifeTime: weapon.LifeTime,
                     firePosition: firePoint.position,
                     direction: fireDir,
-                    damage: weapon.Damage + updateStat.AddPlayerDamage,
+                    damage: damage,
                     prefabName: weapon.PrefabName,
                     LayerMask.GetMask("Monster")
                 );
             }
+
+            Player.Instance.PlayAttackAnim();
 
             yield return new WaitForSeconds(0.1f / updateStat.MultiplePlayerAttackSpeed);
         }

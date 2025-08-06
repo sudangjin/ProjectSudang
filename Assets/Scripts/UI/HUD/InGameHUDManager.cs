@@ -5,8 +5,9 @@ public class InGameHUDManager : MonoBehaviour
     public static InGameHUDManager Instance { get; private set; }
 
     [SerializeField] private UIPlayerLevelInfo uiPlayerLevelInfo;
-    [SerializeField] private UIProgressInfo uIProgressInfo;
-    [SerializeField] private UIScoreInfo uIScoreInfo;
+    [SerializeField] private UIProgressInfo uiProgressInfo;
+    [SerializeField] private UIScoreInfo uiScoreInfo;
+    [SerializeField] private UIWaveInfo uiWave;
 
     private void Awake()
     {
@@ -22,8 +23,8 @@ public class InGameHUDManager : MonoBehaviour
     public void Init()
     {
         uiPlayerLevelInfo.Init();
-        uIProgressInfo.Init();
-        uIScoreInfo.Init();
+        uiProgressInfo.Init();
+        uiScoreInfo.Init();
     }
 
     public void OnClickPause() => PopupManager.Instance.Open<Popup_Pause>();

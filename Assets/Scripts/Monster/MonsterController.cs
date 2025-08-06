@@ -25,14 +25,14 @@ public class MonsterController : MonoBehaviour, IHittable
     }
 
     public void Initialize(
-        Transform targetTransform, MonsterData monster)
+        Transform targetTransform, MonsterData monster, int enemyPowerMultiplier)
     {
         target = targetTransform;
 
         var upgradeStat = UpgradeManager.Instance.AddedUpdateStat;
-        model = new MonsterModel(monster, upgradeStat);
+        model = new MonsterModel(monster, upgradeStat, enemyPowerMultiplier);
 
-        view.Init(this);
+        view.Init(this, enemyPowerMultiplier);
         gameObject.SetActive(true);
 
         Collider2D col = GetComponent<Collider2D>();

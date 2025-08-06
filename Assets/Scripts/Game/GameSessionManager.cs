@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,9 @@ public class GameSessionManager : MonoBehaviour
     [SerializeField] private PlayerController playerController;
     [SerializeField] private InGameHUDManager ingameHUDManager;
 
+    [SerializeField] private SpriteRenderer dayLightSpriteRenderer;
+    [SerializeField] private Material fogOverlayMaterial;
+
     public long Score { get; private set; }
 
     public int Wave { get; private set; }
@@ -25,6 +29,10 @@ public class GameSessionManager : MonoBehaviour
     private List<ExpOrbComponent> expOrbs = new List<ExpOrbComponent>();
     private List<Vector2> spawnDirs = new List<Vector2>();
     public IReadOnlyList<Vector2> SpawnDirections => spawnDirs;
+
+#if UNITY_EDITOR
+    public Color nowTimeColor = Color.white;
+#endif
 
     private void Awake()
     {
@@ -55,7 +63,8 @@ public class GameSessionManager : MonoBehaviour
             stageController.StartStage(playerController.transform);
         }
 
-        ingameHUDManager.Init();
+        ingameHUDManager.Init(); 
+        StartCoroutine(UpdateEnvironmentByWave(initial: true));
         StartCoroutine(WaveLoop());
     }
 
@@ -69,12 +78,22 @@ public class GameSessionManager : MonoBehaviour
                 yield break;
 
             Wave++;
+            GameEvent.Publish(EventKeys.GameWaveChanged, Wave);
+
             killedEnemies = 0;
 
             var upgradeStat = UpgradeManager.Instance.AddedUpdateStat;
 
             totalEnemies = Config.baseEnemyCount + (Wave - 1) * (Config.enemyIncreasePerWave + (upgradeStat.AddEnemyCountByWave * (Wave - upgradeStat.StartAddEnemyCountByWave)));
             totalEnemies = (int)(totalEnemies * upgradeStat.MultipleEnemyCount);
+            int enemyPowerMultiplier = 1;
+            if (totalEnemies > Config.maxEnemyCount)
+            {
+                enemyPowerMultiplier = totalEnemies / Config.maxEnemyCount + 1;
+                var remainCount = totalEnemies % Config.maxEnemyCount;
+
+                totalEnemies = remainCount + Config.baseEnemyCount;
+            }
 
             State = GameState.WaitingWave;
             float targetTime = Time.time + Config.waitTime;
@@ -85,7 +104,7 @@ public class GameSessionManager : MonoBehaviour
             State = GameState.InWave;
             GameEvent.Publish(EventKeys.GameStateChanged, new GameStatePayload(GameState.InWave, current: killedEnemies, max: totalEnemies));
 
-            stageController.StartWave(Wave, totalEnemies, Config.spawnInterval * upgradeStat.MultipleAppearEnemyTime, mapID);
+            stageController.StartWave(Wave, totalEnemies, Config.spawnInterval * upgradeStat.MultipleAppearEnemyTime, mapID, enemyPowerMultiplier);
 
             while (killedEnemies < totalEnemies && State != GameState.GameOver)
                 yield return null;
@@ -94,9 +113,47 @@ public class GameSessionManager : MonoBehaviour
             {
                 yield return StartCoroutine(CollectAllExp());
                 yield return StartCoroutine(ApplyPendingExpRoutine());
+                yield return StartCoroutine(UpdateEnvironmentByWave());
             }
         }
     }
+
+
+    private IEnumerator UpdateEnvironmentByWave(bool initial = false)
+    {
+        int waveInCycle = (Wave - 1) % 20;
+        float t = waveInCycle / 19f;
+
+        Gradient gradient = Config.colorOverTime;
+        Color targetColor = gradient.Evaluate(t);
+        float alpha = targetColor.a;
+
+        if (dayLightSpriteRenderer != null)
+        {
+            if (initial)
+                dayLightSpriteRenderer.color = targetColor;
+            else
+                dayLightSpriteRenderer.DOColor(targetColor, 1.5f);
+        }
+
+        if (fogOverlayMaterial != null)
+        {
+            float targetRadius = Mathf.Lerp(10f, 4f, Mathf.Clamp01(alpha / 232f));
+
+            if (initial)
+                fogOverlayMaterial.SetFloat("_LightRadius", targetRadius);
+            else
+            {
+                DOTween.To(() => fogOverlayMaterial.GetFloat("_LightRadius"),
+                           x => fogOverlayMaterial.SetFloat("_LightRadius", x),
+                           targetRadius, 1.5f);
+            }
+        }
+
+        if (!initial)
+            yield return new WaitForSeconds(1.5f);
+    }
+
 
     public void OnEnemyKilled()
     {
@@ -107,7 +164,7 @@ public class GameSessionManager : MonoBehaviour
 
     public void AddScore(long amount)
     {
-        Score += (amount * Wave);
+        Score += amount;
         GameEvent.Publish(EventKeys.GameScoreChanged, Score);
     }
 

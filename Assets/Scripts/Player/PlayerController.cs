@@ -240,7 +240,6 @@ public class PlayerController : MonoBehaviour, IHittable
         if (model.IsDead) return;
 
         model.TakeDamage(damage);
-        view.PlayHitEffect();
         view.ShowDamage(damage, false);
         view.UpdateHPGauge(model.CurrentHP, model.MaxHP);
 
@@ -287,6 +286,11 @@ public class PlayerController : MonoBehaviour, IHittable
 
             yield return new WaitForSeconds(1f);
         }
+    }
+
+    public void PlayAttackAnim()
+    {
+        view.PlayAttackAnim();
     }
 }
 

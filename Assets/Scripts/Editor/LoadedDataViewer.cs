@@ -99,7 +99,7 @@ public class LoadedDataViewer : EditorWindow
                 if (GUILayout.Button($"{u.ID} | {u.Name}", GUILayout.ExpandWidth(true)))
                 {
                     UpgradeManager.Instance.ApplyUpgrade(u.ID);
-                    PopupManager.Instance.ShowLabel($"Upgrade {u.Name} applied!", Color.green);
+                    PopupManager.Instance.ShowLabel($"{u.Name} : {UpgradeManager.Instance.GetDesc(u.ID, false)}", Color.green);
                 }
 
                 Rect foldoutRect = GUILayoutUtility.GetRect(15, EditorGUIUtility.singleLineHeight);
@@ -113,7 +113,7 @@ public class LoadedDataViewer : EditorWindow
                     EditorGUILayout.LabelField($"MaxLevel: {u.MaxLevel}");
                     EditorGUILayout.LabelField($"RequireWeapon: {u.RequireWeaponID}");
                     EditorGUILayout.LabelField($"RequireUpgrades: {u.RequireUpgrades.ToString()}");
-                    EditorGUILayout.LabelField($"Value: {u.Value}");
+                    EditorGUILayout.LabelField($"Value: {u.Param1}");
                     EditorGUI.indentLevel--;
                 }
             }

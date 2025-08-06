@@ -36,7 +36,7 @@ public class CardCell : MonoBehaviour
         UpgradeCount = upgradeCount;
 
         nameText.text = upgrade.Name;
-        descText.text = upgrade.Desc;
+        descText.text = UpgradeManager.Instance.GetDesc(upgrade.ID, true);
         multiplierText.text = UpgradeCount > 1 ? $"x{UpgradeCount}" : string.Empty;
         negativeMark.SetActive(upgrade.IsNegative);
 

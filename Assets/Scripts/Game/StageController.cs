@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class StageController : MonoBehaviour
 {
-    public MonsterSpawner spawner;
+    [SerializeField] private MonsterSpawner spawner;
+
     private Transform player;
 
     public void StartStage(Transform playerTransform)
@@ -13,12 +14,12 @@ public class StageController : MonoBehaviour
         player = playerTransform;
     }
 
-    public void StartWave(int waveIndex, int enemyCount, float spawnInterval, int mapID)
+    public void StartWave(int waveIndex, int enemyCount, float spawnInterval, int mapID, int enemyPowerMultiplier)
     {
-        StartCoroutine(SpawnWave(waveIndex, enemyCount, spawnInterval, mapID));
+        StartCoroutine(SpawnWave(waveIndex, enemyCount, spawnInterval, mapID, enemyPowerMultiplier));
     }
 
-    private IEnumerator SpawnWave(int waveIndex, int enemyCount, float spawnInterval, int mapID)
+    private IEnumerator SpawnWave(int waveIndex, int enemyCount, float spawnInterval, int mapID, int enemyPowerMultiplier)
     {
         var ratios = GameSessionManager.Instance.Config.monsterSpawnRatios;
         float totalWeight = ratios.Sum(r => r.ratio);
@@ -59,7 +60,7 @@ public class StageController : MonoBehaviour
         while (spawnQueue.Count > 0)
         {
             var monster = spawnQueue.Dequeue();
-            spawner.SpawnMonster(player, monster);
+            spawner.SpawnMonster(player, monster, enemyPowerMultiplier);
             yield return new WaitForSeconds(spawnInterval);
         }
     }

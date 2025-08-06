@@ -42,12 +42,21 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Layer 1
+  - name: Background
     uniqueID: 2425651459
     locked: 0
-  - name: Layer 2
+  - name: Entity
     uniqueID: 4250941897
     locked: 0
-  - name: Layer 3
+  - name: WorldUIUnderFog
+    uniqueID: 2461531441
+    locked: 0
+  - name: FogOveray
     uniqueID: 4189426099
+    locked: 0
+  - name: WorldUI
+    uniqueID: 2294250791
+    locked: 0
+  - name: UI
+    uniqueID: 204415729
     locked: 0

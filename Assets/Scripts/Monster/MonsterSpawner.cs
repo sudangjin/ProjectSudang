@@ -16,7 +16,7 @@ public class MonsterSpawner : MonoBehaviour
         Instance = this;
     }
 
-    public void SpawnMonster(Transform player, MonsterData monster)
+    public void SpawnMonster(Transform player, MonsterData monster, int enemyPowerMultiplier)
     {
         var config = GameSessionManager.Instance.Config;
 
@@ -33,6 +33,6 @@ public class MonsterSpawner : MonoBehaviour
 
         var controller = monsterObj.GetComponent<MonsterController>();
         controller.PrefabReference = prefab;
-        controller.Initialize(player, monster);
+        controller.Initialize(player, monster, enemyPowerMultiplier);
     }
 }

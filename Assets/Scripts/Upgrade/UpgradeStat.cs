@@ -1,6 +1,7 @@
 public class UpgradeStat
 {
     public int AddPlayerDamage { get; private set; }
+    public float PaneltyPlayerDamage { get; private set; } = 1f;
     public float MultplePlayerProjectileSpeed { get; private set; }
     public int AddShotSameDir { get; private set; }
     public int AddShotRandomDir { get; private set; }
@@ -61,14 +62,16 @@ public class UpgradeStat
         MultplePlayerProjectileSpeed = 1f + value;
     }
 
-    public void UpdateShotSameDir(int value)
+    public void UpdateShotSameDir(int value, float panelty)
     {
         AddShotSameDir = value;
+        PaneltyPlayerDamage -= panelty;
     }
 
-    public void UpdateShotRandomDir(int value)
+    public void UpdateShotRandomDir(int value, float panelty)
     {
         AddShotRandomDir = value;
+        PaneltyPlayerDamage -= panelty;
     }
 
     public void UpdateShotBehindDir(bool value)

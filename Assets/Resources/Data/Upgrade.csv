@@ -1,22 +1,22 @@
-﻿ID,Name,Type,RequireWeaponID,RequireUpgrade,MaxLevel,Value,AddScore,IsNegative,Desc
-1,더 강하게,POWER_UP,0,0,0,1,0,FALSE,투사체의 데미지가 증가한다.<br>증가 데미지: {0}
-2,세게 쏘기,PROJECTILE_SPEED_UP,0,0,5,0.1,0,FALSE,투사체의 속도가 증가한다.<br>증가 속도: {0}%
-3,조정간 연발,MULTI_SHOT_SAME_DIRECTION,1,0,3,1,0,FALSE,여러개의 투사체를 한번에 발사한다.<br>발사 개수: {0}회
-4,난사,MULTI_SHOT_RANDOM_DIRECTION,1,0,2,1,0,FALSE,투사체를 불규칙한 방향으로 발사한다.<br>발사 개수: {0}회
-5,뒷통수의 눈,MULTI_SHOT_BEHIND_DIRECTION,0,0,1,1,0,FALSE,보는 방향 뒷통수에서 투사체를 발사한다.
-6,빠른 장전,RELOAD_TIME_UP,0,0,5,0.1,0,FALSE,투사체 장전시간이 감소한다.<br>장전 시간: {0}%
-7,재빠른 손놀림,ROTATION_SPEED_UP,0,0,3,0.2,0,FALSE,방향 회전속도가 증가한다.<br>증가 속도: {0}%
-8,집중력,NORMALIZE_RANDOM_SHOT_DIRECTION,1,[4-2],1,1,0,FALSE,고도의 집중력을 발휘하여 난사의 방향을 정상화시킨다.
-9,자연회복,HEAL_HP_PER_SECOND,0,0,0,1,0,FALSE,초당 HP을 회복한다.<br>초당 회복량: {0}
-10,흡혈,HEAL_HP_ON_KILL,0,0,0,10,0,FALSE,처치당 HP를 회복한다.<br>처치당 회복량: {0}
-11,첨단 회복기술,HEAL_UP,0,[9-5]:[10-5],3,1,0,FALSE,모든 회복 효율을 증가시킨다.<br>증가 효율: {0}%
-12,혈액팩,HP_UP,0,0,0,10,0,FALSE,최대 HP를 증가시킨다.<br>증가 HP: {0}
-13,빨리빨리,ENEMY_SPAWN_UP,0,0,5,0.1,0,FALSE,적들이 등장하는 주기를 만큼 감소시킨다.<br>등장 주기: {0}%
-14,많아지는 적,ENEMY_PER_WAVE_UP,0,0,0,1,0,FALSE,매 웨이브마다 적이 늘어나는 수를 증가시킨다.<br>웨이브당 적 증가: {0}
-15,스템피드,ENEMY_COUNT_UP,0,[13-5]:[14-5],10,0.2,0,FALSE,적들의 수를 증가시킨다.<br>적 증가: {0}%
-16,강해진 적,NEGATIVE_ENEMY_POWER_UP,0,0,0,0.1,0.05,TRUE,적들의 공격력이 증가한다.<br>적 공격력 증가: {0}
-17,도발,NEGATIVE_ENEMY_MOVEMENT_SPEED_UP,0,0,5,0.1,0.05,TRUE,적들의 이동 속도가 증가한다.<br>적 이동 속도 증가: {0}%
-18,균형감각 박살,NEGATIVE_WRONG_TURN,0,0,3,0.1,0.05,TRUE,회전시 때때로 2칸을 회전한다.<br>오작동 확률: {0}%
-19,돌연변이,NEGATIVE_ENEMY_HP_UP,0,0,0,0.1,0.05,TRUE,적들의 HP가 증가한다.<br>적 HP 증가: {0}
-20,스팀팩?,NEGATIVE_ENEMY_ATTACK_SPEED_UP,0,0,5,0.1,0.05,TRUE,적들의 공격 속도가 증가한다.<br>적 공격 속도 증가: {0}%
-21,거리감 상실,NEGATIVE_ENEMY_ATTACK_RANGE_UP,0,0,5,0.1,0.05,TRUE,적들의 공격 범위가 증가한다.<br>적 범위 증가: {0}%
+﻿ID,Name,Type,RequireWeaponID,RequireUpgrade,MaxLevel,Param1,Param2,AddScore,IsNegative,Desc
+1,더 강하게,POWER_UP,0,0,0,1,0,0,FALSE,투사체의 데미지가 증가한다.<br>증가 데미지: {0}
+2,세게 쏘기,PROJECTILE_SPEED_UP,0,0,5,0.1,0,0,FALSE,투사체의 속도가 증가한다.<br>증가 속도: {0}%
+3,조정간 연발,MULTI_SHOT_SAME_DIRECTION,1,0,3,1,0.2,0,FALSE,여러개의 투사체를 한번에 발사한다.<br>발사 개수: {0}회<br>데미지 감소: {1}%
+4,난사,MULTI_SHOT_RANDOM_DIRECTION,1,0,2,1,0.2,0,FALSE,투사체를 불규칙한 방향으로 발사한다.<br>발사 개수: {0}회<br>데미지 감소: {1}%
+5,뒷통수의 눈,MULTI_SHOT_BEHIND_DIRECTION,0,0,1,1,0,0,FALSE,보는 방향 뒷통수에서 투사체를 발사한다.
+6,빠른 장전,RELOAD_TIME_UP,0,0,5,0.1,0,0,FALSE,투사체 장전시간이 감소한다.<br>장전 시간: {0}%
+7,재빠른 손놀림,ROTATION_SPEED_UP,0,0,3,0.2,0,0,FALSE,방향 회전속도가 증가한다.<br>증가 속도: {0}%
+8,집중력,NORMALIZE_RANDOM_SHOT_DIRECTION,1,[4-2],1,1,0,0,FALSE,고도의 집중력을 발휘하여 난사의 방향을 정상화시킨다.
+9,자연회복,HEAL_HP_PER_SECOND,0,0,0,1,0,0,FALSE,초당 HP을 회복한다.<br>초당 회복량: {0}
+10,흡혈,HEAL_HP_ON_KILL,0,0,0,10,0,0,FALSE,처치당 HP를 회복한다.<br>처치당 회복량: {0}
+11,첨단 회복기술,HEAL_UP,0,[9-5]:[10-5],3,1,0,0,FALSE,모든 회복 효율을 증가시킨다.<br>증가 효율: {0}%
+12,혈액팩,HP_UP,0,0,0,10,0,0,FALSE,최대 HP를 증가시킨다.<br>증가 HP: {0}
+13,빨리빨리,ENEMY_SPAWN_UP,0,0,5,0.1,0,0,FALSE,적들이 등장하는 주기를 만큼 감소시킨다.<br>등장 주기: {0}%
+14,많아지는 적,ENEMY_PER_WAVE_UP,0,0,0,1,0,0,FALSE,매 웨이브마다 적이 늘어나는 수를 증가시킨다.<br>웨이브당 적 증가: {0}
+15,스템피드,ENEMY_COUNT_UP,0,[13-5]:[14-5],10,0.2,0,0,FALSE,적들의 수를 증가시킨다.<br>적 증가: {0}%
+16,강해진 적,NEGATIVE_ENEMY_POWER_UP,0,0,0,0.1,0,0.05,TRUE,적들의 공격력이 증가한다.<br>적 공격력 증가: {0}%
+17,도발,NEGATIVE_ENEMY_MOVEMENT_SPEED_UP,0,0,5,0.1,0,0.05,TRUE,적들의 이동 속도가 증가한다.<br>적 이동 속도 증가: {0}%
+18,균형감각 박살,NEGATIVE_WRONG_TURN,0,0,3,0.1,0,0.05,TRUE,회전시 때때로 2칸을 회전한다.<br>오작동 확률: {0}%
+19,돌연변이,NEGATIVE_ENEMY_HP_UP,0,0,0,0.1,0,0.05,TRUE,적들의 HP가 증가한다.<br>적 HP 증가: {0}%
+20,스팀팩?,NEGATIVE_ENEMY_ATTACK_SPEED_UP,0,0,5,0.1,0,0.05,TRUE,적들의 공격 속도가 증가한다.<br>적 공격 속도 증가: {0}%
+21,거리감 상실,NEGATIVE_ENEMY_ATTACK_RANGE_UP,0,0,5,0.1,0,0.05,TRUE,적들의 공격 범위가 증가한다.<br>적 범위 증가: {0}%

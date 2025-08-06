@@ -14,13 +14,11 @@ public class GameConfig : ScriptableObject
     public float waitTime = 3f;
     public int baseEnemyCount = 20;
     public int enemyIncreasePerWave = 2;
+    public int maxEnemyCount = 60;
 
     [Header("Monster")]
     public float spawnInterval = 2f;
     public float spawnRadius = 8f;
-    public float monsterHPPerWave = 0.2f;
-    public float monsterDamagePerWave = 0.2f;
-    public float monsterScorePerWave = 0.5f;
 
     [Header("Monster Spawn Ratio")]
     public List<MonsterSpawnEntry> monsterSpawnRatios = new List<MonsterSpawnEntry>();
@@ -35,5 +33,8 @@ public class GameConfig : ScriptableObject
     [Header("DamageText")]
     public Color monsterHit;
     public Color playerHit;
-    public Color playerHeal;
+    public Color playerHeal; 
+    
+    [Header("TimeColor")]
+    public Gradient colorOverTime;
 }

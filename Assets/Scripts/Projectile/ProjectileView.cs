@@ -2,10 +2,12 @@ using UnityEngine;
 
 public class ProjectileView : MonoBehaviour
 {
+    [SerializeField] private TrailRenderer trailRenderer;
     private ProjectileController controller;
 
     public void Init(ProjectileController controller)
     {
+        if(trailRenderer) trailRenderer.Clear();
         this.controller = controller;
         RotateToDirection(controller.Direction);
     }

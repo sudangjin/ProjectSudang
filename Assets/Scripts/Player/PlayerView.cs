@@ -5,11 +5,11 @@ using DG.Tweening;
 [RequireComponent(typeof(SpriteRenderer))]
 public class PlayerView : MonoBehaviour
 {
+    [SerializeField] private SPUM_Prefabs spum;
     [SerializeField] private Transform unit;
     [SerializeField] private Transform dirStick;
 
     [SerializeField] private UIGauge hpGauge;
-    [SerializeField] private SpriteRenderer spriteRenderer;
 
     public PlayerController Controller { get; private set; }
 
@@ -37,8 +37,7 @@ public class PlayerView : MonoBehaviour
             hpGauge.SetProgress(current, max);
         }
 
-        if (spriteRenderer == null)
-            spriteRenderer = GetComponent<SpriteRenderer>();
+        spum.OverrideControllerInit();
     }
 
     public void UpdateFacingByDirection(Vector2 dir)
@@ -77,30 +76,6 @@ public class PlayerView : MonoBehaviour
         }
     }
 
-    public void PlayHitEffect()
-    {
-        if (spriteRenderer == null) return;
-
-        if (flashCoroutine != null)
-            StopCoroutine(flashCoroutine);
-
-        flashCoroutine = StartCoroutine(FlashWhite());
-    }
-
-    private IEnumerator FlashWhite()
-    {
-        spriteRenderer.GetPropertyBlock(propertyBlock);
-        Color originalColor = spriteRenderer.color;
-
-        propertyBlock.SetColor(ColorID, Color.white * 2f);
-        spriteRenderer.SetPropertyBlock(propertyBlock);
-
-        yield return new WaitForSeconds(0.1f);
-
-        propertyBlock.SetColor(ColorID, originalColor);
-        spriteRenderer.SetPropertyBlock(propertyBlock);
-    }
-
     public void UpdateHPGauge(int current, int max)
     {
         if (hpGauge == null) return;
@@ -131,5 +106,12 @@ public class PlayerView : MonoBehaviour
         var dmg = obj.GetComponent<DamageText>();
         var color = isHeal ? GameSessionManager.Instance.Config.playerHeal : GameSessionManager.Instance.Config.playerHit;
         dmg.Show(damage, color, spawnPos);
+    }
+
+    public void PlayAttackAnim()
+    {
+        if (spum == null) return;
+
+        spum.PlayAnimation(PlayerState.ATTACK, 0, 1f);
     }
 }

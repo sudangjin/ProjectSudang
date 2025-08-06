@@ -5,8 +5,7 @@ using System;
 
 public class ExpOrbComponent : MonoBehaviour
 {
-    [SerializeField] private SpriteRenderer shineSprite;
-    private SpriteRenderer spriteRenderer;
+    private ParticleSystem particle;
 
     public int Value { get; private set; }
 
@@ -19,15 +18,36 @@ public class ExpOrbComponent : MonoBehaviour
 
     private void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        particle = GetComponent<ParticleSystem>();
     }
 
     public void Init(int value, int grade)
     {
         Value = value;
         isCollecting = false;
-        spriteRenderer.color = GameSessionManager.Instance.Config.expColors[grade - 1];
-        StartShine();
+
+        var color = GameSessionManager.Instance.Config.expColors[grade - 1];
+        var main = particle.main;
+        main.startColor = color;
+
+        var colorOverLifetime = particle.colorOverLifetime;
+        if (colorOverLifetime.enabled)
+        {
+            Gradient grad = new Gradient();
+
+            grad.SetKeys(
+                new GradientColorKey[] {
+                new GradientColorKey(color, 0f),
+                new GradientColorKey(Color.white, 1f)
+                },
+                new GradientAlphaKey[] {
+                new GradientAlphaKey(1f, 0.5f),
+                new GradientAlphaKey(0.5f, 1f)
+                }
+            );
+
+            colorOverLifetime.color = new ParticleSystem.MinMaxGradient(grad);
+        }
     }
 
     public void Collect(Transform player, Action onFinish)
@@ -43,18 +63,6 @@ public class ExpOrbComponent : MonoBehaviour
         StartCoroutine(MoveToPlayer());
     }
 
-    private void StartShine()
-    {
-        if (shineSprite == null) return;
-
-        if (colorTween != null && colorTween.IsActive())
-            colorTween.Kill();
-
-        colorTween = spriteRenderer
-            .DOFade(0.5f, 0.8f)
-            .SetLoops(-1, LoopType.Yoyo)
-            .SetEase(Ease.InOutSine);
-    }
 
     private IEnumerator MoveToPlayer()
     {

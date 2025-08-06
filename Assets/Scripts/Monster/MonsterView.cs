@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using TMPro;
 
 public class MonsterView : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class MonsterView : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Animator animator;
     [SerializeField] private UIGauge hpGauge;
+    [SerializeField] private TextMeshProUGUI textPowerMultiplier;
 
     private Transform playerTransform;
     private MaterialPropertyBlock propertyBlock;
@@ -19,7 +21,7 @@ public class MonsterView : MonoBehaviour
         propertyBlock = new MaterialPropertyBlock();
     }
 
-    public void Init(MonsterController monsterController)
+    public void Init(MonsterController monsterController, float enemyPowerMultiplier)
     {
         controller = monsterController;
 
@@ -31,6 +33,13 @@ public class MonsterView : MonoBehaviour
 
         if (Player.Instance != null)
             playerTransform = Player.Instance.transform;
+
+        if (textPowerMultiplier != null)
+        { 
+            textPowerMultiplier.text = enemyPowerMultiplier > 1f ? 
+                $"x{enemyPowerMultiplier:F1}" : 
+                string.Empty;
+        }
     }
 
     public void Update()
